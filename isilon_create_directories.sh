@@ -15,6 +15,7 @@ declare -a ERRORLIST=()
 
 DIST=""
 FIXPERM="n"
+POSIX="y"
 ZONE="System"
 CLUSTER_NAME=""
 
@@ -27,7 +28,7 @@ function banner() {
 }
 
 function usage() {
-   echo "$0 --dist <cdh|hwx|phd|phd3|bi> [--zone <ZONE>] [--fixperm] [--append-cluster-name <clustername>]"
+   echo "$0 --dist <cdh|hwx|bi> [--zone <ZONE>] [--fixperm] [--append-cluster-name <clustername>]"
    exit 1
 }
 
@@ -66,6 +67,10 @@ function fixperm() {
       gid=$(getGroupGid $3)
       chown $uid $1
       chown :$gid $1
+      if [ "POSIX" == "n" ] ; then
+          chmod $4 $1
+      fi
+      chmod -D $1
       chmod $4 $1
    fi
 }
@@ -125,6 +130,10 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will fix permissions and owners on existing directories"
              FIXPERM="y"
              ;;
+      "--posix-only")
+             echo "Info: will remove all existing permissions, including mode equivalent of extended ACLs, before setting POSIX permissions."
+             POSIX="y"
+             ;;
       "--append-cluster-name")
              shift
              CLUSTER_NAME="-$1"
@@ -168,13 +177,14 @@ case "$DIST" in
         # Format is: dirname#perm#owner#group
         dirList=(\
             "/#755#hdfs#hadoop" \
-            "/app-logs#777#yarn#hadoop#" \
-            "/app-logs/ambari-qa#770#ambari-qa#hadoop#" \
-            "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop#" \
+            "/app-logs#777#yarn#hadoop" \
+            "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
+            "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
             "/tmp#1777#hdfs#hdfs" \
-            "/apps#755#hdfs#hadoop#" \
-            "/apps/falcon#777#falcon#hdfs#" \
-            "/apps/accumulo/#750#accumulo#hadoop#" \
+            "/tmp/hive#777#ambari-qa#hdfs" \
+            "/apps#755#hdfs#hadoop" \
+            "/apps/falcon#777#falcon#hdfs" \
+            "/apps/accumulo/#750#accumulo#hadoop" \
             "/apps/hbase#755#hdfs#hadoop" \
             "/apps/hbase/data#775#hbase#hadoop" \
             "/apps/hbase/staging#711#hbase#hadoop" \
@@ -195,77 +205,24 @@ case "$DIST" in
             "/system/yarn/node-labels#700#yarn#hadoop" \
         )
         ;;
-    "phd")
-        # Format is: dirname#perm#owner#group
-        dirList=(\
-            "/#755#hdfs#hadoop" \
-            "/apps#755#hdfs#hadoop#" \
-            "/apps/hbase#755#hdfs#hadoop" \
-            "/apps/hbase/data#775#hbase#hadoop" \
-            "/apps/hbase/staging#711#hbase#hadoop" \
-            "/hawq_data#770#gpadmin#hadoop"
-            "/hive#755#hdfs#hadoop" \
-            "/hive/gphd#755#hdfs#hadoop" \
-            "/hive/gphd/warehouse#1777#hive#hadoop" \
-            "/mapred#755#mapred#hadoop" \
-            "/mapred/system#700#mapred#hadoop" \
-            "/tmp#777#hdfs#hadoop" \
-            "/tmp/gphdtmp#777#hdfs#hadoop" \
-            "/user#777#hdfs#hadoop" \
-            "/user/history#777#mapred#hadoop" \
-            "/user/history/done#777#mapred#hadoop" \
-            "/user/history/done_intermediate#1777#mapred#hadoop" \
-            "/yarn#755#hdfs#hadoop" \
-            "/yarn/apps#777#mapred#hadoop" \
-        )
-        ;;
-    "phd3")
-        # Format is: dirname#perm#owner#group
-        dirList=(\
-            "/#755#hdfs#hadoop" \
-            "/app-logs#777#yarn#hadoop#" \
-            "/apps#755#hdfs#hadoop#" \
-            "/apps/hbase#755#hdfs#hadoop" \
-            "/apps/hbase/data#775#hbase#hadoop" \
-            "/apps/hbase/staging#711#hbase#hadoop" \
-            "/hawq_data#770#gpadmin#hadoop"
-            "/hive#755#hdfs#hadoop" \
-            "/hive/gphd#755#hdfs#hadoop" \
-            "/hive/gphd/warehouse#1777#hive#hadoop" \
-            "/mapred#755#mapred#hadoop" \
-            "/mapred/system#700#mapred#hadoop" \
-            "/mr-history#755#mapred#hadoop" \
-            "/tmp#1777#hdfs#hdfs" \
-            "/tmp/gphdtmp#777#hdfs#hadoop" \
-            "/user#777#hdfs#hadoop" \
-            "/user/ambari-qa#770#ambari-qa#hdfs" \
-            "/user/gpadmin#700#gpadmin#gpadmin" \
-            "/user/hbase#700#hbase#hbase" \
-            "/user/hcat#755#hcat#hdfs" \
-            "/user/history#777#mapred#hadoop" \
-            "/user/history/done#777#mapred#hadoop" \
-            "/user/history/done_intermediate#1777#mapred#hadoop" \
-            "/user/hive#700#hive#hdfs" \
-            "/user/hue#755#hue#hue" \
-            "/user/mapred#700#mapred#mapred" \
-            "/user/oozie#775#oozie#hdfs" \
-            "/user/spark#755#spark#spark" \
-            "/user/spark/applicationHistory#1777#spark#spark" \
-            "/user/tez#700#tez#tez" \
-            "/user/yarn#700#yarn#yarn" \
-            "/user/zookeeper#700#zookeeper#zookeeper" \
-            "/yarn#755#hdfs#hadoop" \
-            "/yarn/apps#777#mapred#hadoop" \
-        )
-        ;;
     "bi")
         # Format is: dirname#perm#owner#group
         dirList=(\
             "/#755#hdfs#hadoop" \
             "/tmp#1777#hdfs#hadoop" \
+            "/tmp/hive#777#ambari-qa#hadoop"
             "/user#755#hdfs#hadoop" \
             "/iop#755#hdfs#hadoop" \
             "/apps#755#hdfs#hadoop" \
+            "/apps/falcon#777#falcon#hadoop" \
+            "/apps/accumulo/#750#accumulo#hadoop" \
+            "/apps/hbase#755#hdfs#hadoop" \
+            "/apps/hbase/data#775#hbase#hadoop" \
+            "/apps/hbase/staging#711#hbase#hadoop" \
+            "/apps/hive#755#hdfs#hadoop" \
+            "/apps/hive/warehouse#777#hive#hadoop" \
+            "/apps/tez#755#tez#hadoop" \
+            "/apps/webhcat#755#hcat#hadoop" \
             "/app-logs#755#hdfs#hadoop" \
             "/mapred#755#hdfs#hadoop" \
             "/mr-history#755#hdfs#hadoop" \

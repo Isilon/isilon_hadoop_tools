@@ -1,8 +1,8 @@
 #!/bin/bash
-############################################################################
+###########################################################################
 ##  Script to create Hadoop users on Isilon.
 ##  Must be run on Isilon system as root.
-############################################################################
+###########################################################################
 
 if [ -z "$BASH_VERSION" ] ; then
    # probably using zsh...
@@ -28,7 +28,7 @@ function banner() {
 }
 
 function usage() {
-   echo "$0 --dist <cdh|hwx|phd|phd3|bi> [--startgid <GID>] [--startuid <UID>] [--zone <ZONE>] [--append-cluster-name <clustername>]"
+   echo "$0 --dist <cdh|hwx|bi> [--startgid <GID>] [--startuid <UID>] [--zone <ZONE>] [--append-cluster-name <clustername>]"
    exit 1
 }
 
@@ -167,20 +167,8 @@ case "$DIST" in
         REQUIRED_USERS="$SUPER_USERS tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop anonymous spark mahout ranger kms atlas ams kafka"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         ;;
-    "phd")
-        SUPER_USERS="hdfs mapred hbase gpadmin hive yarn"
-        SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS"
-        REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        ;;
-    "phd3")
-        SUPER_USERS="hdfs mapred hbase gpadmin hive yarn"
-        SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS tez hcat oozie zookeeper ambari-qa pxf knox spark hue"
-        REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        ;;
     "bi")
-        SUPER_USERS="hdfs hadoop mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome"
+        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous ams"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
