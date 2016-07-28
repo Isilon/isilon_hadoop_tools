@@ -1,7 +1,7 @@
 #!/bin/bash
 ###########################################################################
 ##  Script to create Hadoop directory structure on Isilon.
-##  Must be run on Isilon system.
+##  Must be run on Isilon system as root.
 ###########################################################################
 
 if [ -z "$BASH_VERSION" ] ; then
@@ -174,7 +174,8 @@ case "$DIST" in
         )
         ;;
     "hwx")
-        # Format is: dirname#perm#owner#group
+ 	# Format is: dirname#perm#owner#group
+	# The directory list below is good thru HDP 2.4
         dirList=(\
             "/#755#hdfs#hadoop" \
             "/app-logs#777#yarn#hadoop" \
@@ -206,7 +207,8 @@ case "$DIST" in
         )
         ;;
     "bi")
-        # Format is: dirname#perm#owner#group
+ 	# Format is: dirname#perm#owner#group
+	#The directory list is good thru IBM BI v 4.2
         dirList=(\
             "/#755#hdfs#hadoop" \
             "/tmp#1777#hdfs#hadoop" \
