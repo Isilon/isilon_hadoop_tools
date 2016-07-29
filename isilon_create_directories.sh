@@ -15,7 +15,7 @@ declare -a ERRORLIST=()
 
 DIST=""
 FIXPERM="n"
-POSIX="y"
+POSIX="n"
 ZONE="System"
 CLUSTER_NAME=""
 
@@ -67,10 +67,9 @@ function fixperm() {
       gid=$(getGroupGid $3)
       chown $uid $1
       chown :$gid $1
-      if [ "POSIX" == "n" ] ; then
-          chmod $4 $1
+      if [ "POSIX" == "y" ] ; then
+          chmod -D $1
       fi
-      chmod -D $1
       chmod $4 $1
    fi
 }
@@ -131,7 +130,7 @@ while [ "z$1" != "z" ] ; do
              FIXPERM="y"
              ;;
       "--posix-only")
-             echo "Info: will remove all existing permissions, including mode equivalent of extended ACLs, before setting POSIX permissions."
+             echo "Info: will remove all existing permissions, including ACEs, before setting POSIX permissions."
              POSIX="y"
              ;;
       "--append-cluster-name")
