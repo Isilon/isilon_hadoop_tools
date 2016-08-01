@@ -162,18 +162,18 @@ case "$DIST" in
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS sqoop"
         ;;
     "hwx")
-        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer"
+        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy""
         SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop anonymous spark mahout ranger kms atlas ams kafka zeppelin livy"
-        if [ zone != "System" ]; then
+        REQUIRED_USERS="$SUPER_USERS anonymous" 
+	if [ zone != "System" ]; then
           REQUIRED_USERS = "$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         ;;
     "bi")
-        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome"
-        SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS anonymous ams"
+        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams" 
+	SUPER_GROUPS="hadoop"
+        REQUIRED_USERS="$SUPER_USERS anonymous"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         ;;
     *)
