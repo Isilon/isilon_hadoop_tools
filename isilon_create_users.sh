@@ -165,6 +165,9 @@ case "$DIST" in
         SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop anonymous spark mahout ranger kms atlas ams kafka"
+        if [ zone != "System" ]; then
+          REQUIRED_USERS = "$REQUIRED_USERS admin"
+        fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         ;;
     "bi")
