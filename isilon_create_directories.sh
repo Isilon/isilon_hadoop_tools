@@ -28,7 +28,7 @@ function banner() {
 }
 
 function usage() {
-   echo "$0 --dist <cdh|hwx|bi> [--zone <ZONE>] [--fixperm] [--append-cluster-name <clustername>]"
+   echo "$0 --dist <cdh|hwx|bi> [--zone <ZONE>] [--fixperm] [--posix-only] [--append-cluster-name <clustername>]"
    exit 1
 }
 

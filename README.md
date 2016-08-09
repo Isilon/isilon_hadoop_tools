@@ -26,7 +26,7 @@ This repository contains two scripts:
  
 **Usage:**
 
-``bash Isilon-create-directories.sh –dist --zone --append-cluster-name --fixperm``
+``bash Isilon-create-directories.sh –dist --zone --append-cluster-name --fixperm --posix-only``
 
 **Arguments**
 
@@ -34,3 +34,4 @@ This repository contains two scripts:
     * zone – the name of the access zone where the directory skeleton should be created
     * append-cluster-name – the Hadoop cluster name the script should append to the usernames (useful for multi-tenant environments that will use a single KDC)
     * fixperm – argument to alter the permissions ownership of the directory skeleton according to the users created by isilon-create-users.sh
+    * posix-only - argument that will strip existing permissions, including ACEs, before applying posix permissions.
