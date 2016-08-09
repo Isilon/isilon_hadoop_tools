@@ -18,8 +18,7 @@ STARTUID=1000
 STARTGID=1000
 ZONE="System"
 CLUSTER_NAME=""
-
-#set -x
+VERBOSE="n"
 
 function banner() {
    echo "##################################################################################"
@@ -141,6 +140,11 @@ while [ "z$1" != "z" ] ; do
              ZONE="$1"
              echo "Info: will put users in zone:  $ZONE"
              ;;
+      "--verbose")
+             shift
+             VERBOSE="y"
+             echo "Info: Invoking verbose output."
+             ;;
       "--append-cluster-name")
              shift
              CLUSTER_NAME="-$1"
@@ -153,6 +157,10 @@ while [ "z$1" != "z" ] ; do
     esac
     shift;
 done
+
+if [ "$VERBOSE" == "y" ] ; then
+   set -x
+fi
 
 case "$DIST" in
     "cdh")
@@ -191,7 +199,6 @@ grpfile="$ZONE.group"
 echo "Info: group file: $grpfile"
 echo "# use this file to add to the group file of your clients" | cat > $grpfile
 
-# set -x
 gid=$STARTGID
 for group in $REQUIRED_GROUPS; do
     # echo "DEBUG:  GID=$gid"
