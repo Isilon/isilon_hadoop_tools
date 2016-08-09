@@ -18,8 +18,7 @@ FIXPERM="n"
 POSIX="n"
 ZONE="System"
 CLUSTER_NAME=""
-
-#set -x
+VERBOSE="n"
 
 function banner() {
    echo "##################################################################################"
@@ -28,7 +27,7 @@ function banner() {
 }
 
 function usage() {
-   echo "$0 --dist <cdh|hwx|bi> [--zone <ZONE>] [--fixperm] [--posix-only] [--append-cluster-name <clustername>]"
+   echo "$0 --dist <cdh|hwx|bi> [--zone <ZONE>] [--fixperm] [--posix-only] [--verbose] [--append-cluster-name <clustername>] "
    exit 1
 }
 
@@ -133,7 +132,60 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will remove all existing permissions, including ACEs, before setting POSIX permissions."
              POSIX="y"
              ;;
+      "--verbose")
+             echo "Info: Invoking verbose output."
+             VERBOSE="y"
+             ;;
       "--append-cluster-name")
+             shift
+             CLUSTER_NAME="-$1"
+             echo "Info: will add clustername to end of usernames: $CLUSTER_NAME"
+             ;;
+      *)     echo "ERROR -- unknown arg $1"
+             usage
+             ;;
+    esac
+    shift;
+done
+
+declare -a dirList
+
+case "$DIST" in
+    "cdh")
+        # Format is: dirname#perm#owner#group
+        dirList=(\
+            "/#755#hdfs#hadoop" \
+            "/hbase#755#hbase#hbase" \
+            "/solr#775#solr#solr" \
+            "/tmp#1777#hdfs#supergroup" \
+            "/tmp/logs#1777#mapred#hadoop" \
+            "/tmp/hive#777#hive#supergroup" \
+            "/user#755#hdfs#supergroup" \
+            "/user/history#777#mapred#hadoop" \
+            "/user/hive#775#hive#hive" \
+            "/user/hive/warehouse#1777#hive#hive" \
+            "/user/hue#755#hue#hue" \
+            "/user/hue/.cloudera_manager_hive_metastore_canary#777#hue#hue" \
+            "/user/impala#775#impala#impala" \
+            "/user/oozie#775#oozie#oozie" \
+            "/user/flume#775#flume#flume" \
+            "/user/spark#751#spark#spark" \
+            "/user/spark/applicationHistory#1777#spark#spark" \
+            "/user/sqoop2#775#sqoop2#sqoop" \
+            "/solr#775#solr#solr" \
+        )
+        ;;
+    "hwx")
+ 	# Format is: dirname#perm#owner#group
+	# The directory list below is good thru HDP 2.4
+        dirList=(\
+            "/#755#hdfs#hadoop" \
+            "/app-logs#777#yarn#hadoop" \
+            "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
+            "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
+            "/tmp#1777#hdfs#hdfs" \
+            "/tmp/hive#777#ambari-qa#hdfs" \
+            "/apps#755#hdfs#hadoop" \
              shift
              CLUSTER_NAME="-$1"
              echo "Info: will add clustername to end of usernames: $CLUSTER_NAME"
@@ -264,6 +316,10 @@ if [ ! -d $HDFSROOT ] ; then
 fi
 
 # MAIN
+
+if [ "$VERBOSE" == "y" ] ; then
+   set -x
+fi
 
 banner "Creates Hadoop directory structure on Isilon system HDFS."
 
