@@ -33,7 +33,7 @@ This repository contains two scripts:
 
 * dist – distribution of Hadoop for which the script should create an HDFS directory skeleton
 * zone – the name of the access zone where the directory skeleton should be created
-* fixperm – argument to alter the permissions ownership of the directory skeleton according to the users created by isilon-create-users.sh
+* fixperm – argument to alter the permissions ownership of the directory skeleton according to the users created by isilon-create-users.sh and isilon-create-directories.sh.  
 * posix-only - argument that will strip existing permissions, including ACEs, before applying posix permissions.
 * verbose - invokes set -x on the script so we can inspect actions
 * append-cluster-name – the Hadoop cluster name the script should append to the usernames (useful for multi-tenant environments that will use a single KDC)

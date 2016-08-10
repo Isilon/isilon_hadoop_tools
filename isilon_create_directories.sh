@@ -125,7 +125,7 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will use users in zone:  $ZONE"
              ;;
       "--fixperm")
-             echo "Info: will fix permissions and owners on existing directories"
+             echo "Info: will fix permissions and owners on existing directories created by this script."
              FIXPERM="y"
              ;;
       "--posix-only")
