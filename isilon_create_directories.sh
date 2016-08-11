@@ -186,55 +186,6 @@ case "$DIST" in
             "/tmp#1777#hdfs#hdfs" \
             "/tmp/hive#777#ambari-qa#hdfs" \
             "/apps#755#hdfs#hadoop" \
-             shift
-             CLUSTER_NAME="-$1"
-             echo "Info: will add clustername to end of usernames: $CLUSTER_NAME"
-             ;;
-      *)     echo "ERROR -- unknown arg $1"
-             usage
-             ;;
-    esac
-    shift;
-done
-
-declare -a dirList
-
-case "$DIST" in
-    "cdh")
-        # Format is: dirname#perm#owner#group
-        dirList=(\
-            "/#755#hdfs#hadoop" \
-            "/hbase#755#hbase#hbase" \
-            "/solr#775#solr#solr" \
-            "/tmp#1777#hdfs#supergroup" \
-            "/tmp/logs#1777#mapred#hadoop" \
-            "/tmp/hive#777#hive#supergroup" \
-            "/user#755#hdfs#supergroup" \
-            "/user/history#777#mapred#hadoop" \
-            "/user/hive#775#hive#hive" \
-            "/user/hive/warehouse#1777#hive#hive" \
-            "/user/hue#755#hue#hue" \
-            "/user/hue/.cloudera_manager_hive_metastore_canary#777#hue#hue" \
-            "/user/impala#775#impala#impala" \
-            "/user/oozie#775#oozie#oozie" \
-            "/user/flume#775#flume#flume" \
-            "/user/spark#751#spark#spark" \
-            "/user/spark/applicationHistory#1777#spark#spark" \
-            "/user/sqoop2#775#sqoop2#sqoop" \
-            "/solr#775#solr#solr" \
-        )
-        ;;
-    "hwx")
- 	# Format is: dirname#perm#owner#group
-	# The directory list below is good thru HDP 2.4
-        dirList=(\
-            "/#755#hdfs#hadoop" \
-            "/app-logs#777#yarn#hadoop" \
-            "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
-            "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
-            "/tmp#1777#hdfs#hdfs" \
-            "/tmp/hive#777#ambari-qa#hdfs" \
-            "/apps#755#hdfs#hadoop" \
             "/apps/falcon#777#falcon#hdfs" \
             "/apps/accumulo/#750#accumulo#hadoop" \
             "/apps/hbase#755#hdfs#hadoop" \
