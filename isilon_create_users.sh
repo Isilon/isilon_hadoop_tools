@@ -212,7 +212,7 @@ for group in $REQUIRED_GROUPS; do
     else
        isi auth groups create $group --gid $gid --zone $ZONE
        [ $? -ne 0 ] && addError "Could not create group $group with gid $gid in zone $ZONE"
-       echo "$group:x:$gid" | cat >> $grpfile
+       echo "$group:x:$gid:" | cat >> $grpfile
        [ $? -ne 0 ] && addError "Could not create entry in group file stub $grpfile for $group with gid $gid"
     fi
     gid=$(( $gid + 1 ))
