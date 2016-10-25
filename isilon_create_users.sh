@@ -164,9 +164,9 @@ fi
 
 case "$DIST" in
     "cdh")
-        SUPER_USERS="hdfs mapred yarn"
+        SUPER_USERS="hdfs mapred yarn HTTP"
         SUPER_GROUPS="hadoop supergroup"
-        REQUIRED_USERS="$SUPER_USERS flume hbase hive hue impala oozie sample solr spark sqoop2 anonymous nothdfs cmjobuser systest"
+        REQUIRED_USERS="$SUPER_USERS cloudera-scm accumulo flume hbase hive httpfs hue apache impala kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS sqoop"
         ;;
     "hwx")
@@ -259,12 +259,23 @@ done
 # Special cases
 case "$DIST" in
     "cdh")
-        isi auth groups modify sqoop$CLUSTER_NAME --add-user sqoop2$CLUSTER_NAME --zone $ZONE
+        #Deal with special cases on Isilon 
+	isi auth groups modify sqoop$CLUSTER_NAME --add-user sqoop2$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in zone $ZONE"
+        isi auth groups modify hive$CLUSTER_NAME --add-user impala$CLUSTER_NAME --zone $ZONE
+        [ $? -ne 0 ] && addError "Could not add user implala$CLUSTER_NAME to hive$CLUSTER_NAME group in zone $ZONE"
+	
+	#Set some varliables to take these special case group assignments to the group file
         sqp=`grep sqoop2$CLUSTER_NAME $grpfile`
+        hve=`grep hive$CLUSTER_NAME $grpfile`
+
+	#manipulate the group file for special cases
         sed -i .bak /$sqp/d $grpfile
         echo "$sqp,sqoop" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
+        sed -i .bak /$hve/d $grpfile
+        echo "$hve,impala" | cat >> $grpfile
+        [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in $grpfile"
         ;;
     "bi")
         isi auth groups modify users$CLUSTER_NAME --add-user hive$CLUSTER_NAME --zone $ZONE
