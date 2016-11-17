@@ -180,7 +180,7 @@ case "$DIST" in
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
         PROXY_USERONLY="HTTP knox"
         SMOKE_USER="ambari-qa"
         ;;
