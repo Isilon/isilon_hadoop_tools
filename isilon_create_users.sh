@@ -167,16 +167,22 @@ case "$DIST" in
         SUPER_USERS="hdfs mapred yarn HTTP"
         SUPER_GROUPS="hadoop supergroup"
         REQUIRED_USERS="$SUPER_USERS cloudera-scm accumulo flume hbase hive httpfs hue apache impala kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
-        REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS sqoop"
+        REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
+        PROXY_SUPER="impala flume hive hue oozie"
+        PROXY_USERONLY="HTTP"
+        SMOKE_USER="cloudera-scm"
         ;;
     "hwx")
-        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP"
+        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous" 
 	if [ "$ZONE" != "System" ]; then
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
+        PROXY_USERONLY="HTTP knox"
+        SMOKE_USER="ambari-qa"
         ;;
     "bi")
         SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams" 
@@ -255,6 +261,17 @@ for group in $SUPER_GROUPS; do
 done
 # set +x
 
+for proxy in $PROXY_SUPER; do
+    proxy="$proxy$CLUSTER_NAME"
+    isi hdfs proxyusers create --proxyuser $proxy --add-group hadoop$CLUSTER_NAME --add-user $SMOKE_USER$CLUSTER_NAME --zone $ZONE
+    [ $? -ne 0 ] && addError "Could not create proxyuser $proxy in zone $ZONE"
+done
+
+for proxy in $PROXY_USERONLY; do
+    proxy="$proxy$CLUSTER_NAME"
+    isi hdfs proxyusers create --proxyuser $proxy --add-user $SMOKE_USER$CLUSTER_NAME --zone $ZONE
+    [ $? -ne 0 ] && addError "Could not create proxyuser $proxy in zone $ZONE"
+done
 
 # Special cases
 case "$DIST" in
