@@ -189,6 +189,8 @@ case "$DIST" in
 	SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
+        PROXY_USERONLY="HTTP knox"
+        SMOKE_USER="ambari-qa"
         ;;
     *)
     echo "ERROR -- Invalid Hadoop distribution"
