@@ -173,7 +173,7 @@ case "$DIST" in
         SMOKE_USER="cloudera-scm"
         ;;
     "hwx")
-        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox"
+        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous" 
 	if [ "$ZONE" != "System" ]; then
@@ -181,7 +181,7 @@ case "$DIST" in
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
-        PROXY_USERONLY="HTTP knox"
+        PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
