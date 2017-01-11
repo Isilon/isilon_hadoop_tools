@@ -168,7 +168,7 @@ case "$DIST" in
         SUPER_GROUPS="hadoop supergroup"
         REQUIRED_USERS="$SUPER_USERS cloudera-scm accumulo flume hbase hive httpfs hue apache impala kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="impala flume hive hue oozie"
+        PROXY_SUPER="impala flume hive hue oozie mapred"
         PROXY_USERONLY="HTTP"
         SMOKE_USER="cloudera-scm"
         ;;
