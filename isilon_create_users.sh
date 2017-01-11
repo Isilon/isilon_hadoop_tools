@@ -283,6 +283,8 @@ case "$DIST" in
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in zone $ZONE"
         isi auth groups modify hive$CLUSTER_NAME --add-user impala$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user implala$CLUSTER_NAME to hive$CLUSTER_NAME group in zone $ZONE"
+	isi auth groups modify hadoop$CLUSTER_NAME --add-user hbase$CLUSTER_NAME --zone $ZONE
+        [ $? -ne 0 ] && addError "Could not add user hbase$CLUSTER_NAME to hadoop$CLUSTER_NAME group in zone $ZONE"
 	
 	#Set some varliables to take these special case group assignments to the group file
         sqp=`grep sqoop2$CLUSTER_NAME $grpfile`
