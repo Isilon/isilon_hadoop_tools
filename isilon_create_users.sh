@@ -188,8 +188,12 @@ case "$DIST" in
         SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams" 
 	SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
+	if [ "$ZONE" != "System" ]; then
+          REQUIRED_USERS="$REQUIRED_USERS admin"
+        fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_USERONLY="HTTP knox"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
+        PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
     *)
