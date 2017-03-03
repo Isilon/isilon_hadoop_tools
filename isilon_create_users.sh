@@ -164,7 +164,7 @@ fi
 
 case "$DIST" in
     "cdh")
-        SUPER_USERS="hdfs mapred yarn HTTP"
+        SUPER_USERS="hdfs mapred yarn HTTP hbase"
         SUPER_GROUPS="hadoop supergroup"
         REQUIRED_USERS="$SUPER_USERS cloudera-scm accumulo flume hbase hive httpfs hue apache impala kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
@@ -185,7 +185,7 @@ case "$DIST" in
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
-        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams" 
+        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server" 
 	SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
 	if [ "$ZONE" != "System" ]; then
@@ -291,12 +291,12 @@ case "$DIST" in
         [ $? -ne 0 ] && addError "Could not add user hbase$CLUSTER_NAME to hadoop$CLUSTER_NAME group in zone $ZONE"
 	
 	#Set some varliables to take these special case group assignments to the group file
-        sqp=`grep sqoop2$CLUSTER_NAME $grpfile`
+        sqp=`grep sqoop$CLUSTER_NAME $grpfile`
         hve=`grep hive$CLUSTER_NAME $grpfile`
 
 	#manipulate the group file for special cases
         sed -i .bak /$sqp/d $grpfile
-        echo "$sqp,sqoop" | cat >> $grpfile
+        echo "$sqp,sqoop2" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
         sed -i .bak /$hve/d $grpfile
         echo "$hve,impala" | cat >> $grpfile
