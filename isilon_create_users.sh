@@ -175,24 +175,24 @@ case "$DIST" in
     "hwx")
         SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server"
         SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS anonymous root"
+        REQUIRED_USERS="$SUPER_USERS anonymous"
         if [ "$ZONE" != "System" ]; then
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
         PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
         SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr acctivity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
         SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS anonymous root"
+        REQUIRED_USERS="$SUPER_USERS anonymous"
         if [ "$ZONE" != "System" ]; then
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
         PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
@@ -332,4 +332,3 @@ else
 fi
 
 echo "Done!"
-
