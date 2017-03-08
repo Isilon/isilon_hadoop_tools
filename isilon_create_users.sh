@@ -166,7 +166,7 @@ case "$DIST" in
     "cdh")
         SUPER_USERS="hdfs mapred yarn HTTP hbase"
         SUPER_GROUPS="hadoop supergroup"
-        REQUIRED_USERS="$SUPER_USERS cloudera-scm accumulo flume hbase hive httpfs hue apache impala kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
+        REQUIRED_USERS="$SUPER_USERS hive impala hue cloudera-scm accumulo flume httpfs apache kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         PROXY_SUPER="impala flume hive hue oozie mapred"
         PROXY_USERONLY="HTTP"
@@ -175,24 +175,24 @@ case "$DIST" in
     "hwx")
         SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server"
         SUPER_GROUPS="hadoop"
-        REQUIRED_USERS="$SUPER_USERS anonymous" 
-	if [ "$ZONE" != "System" ]; then
+        REQUIRED_USERS="$SUPER_USERS anonymous"
+        if [ "$ZONE" != "System" ]; then
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
         PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
-        SUPER_USERS="hdfs mapred hbase knox uiuser dsmadmin bigsheets ambari-qa rrdcached hive yarn hcat bigsql tauser bigr flume nagios solr spark sqoop zookeeper oozie bighome ams livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server" 
-	SUPER_GROUPS="hadoop"
+        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr acctivity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
+        SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
-	if [ "$ZONE" != "System" ]; then
+        if [ "$ZONE" != "System" ]; then
           REQUIRED_USERS="$REQUIRED_USERS admin"
         fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
-        PROXY_SUPER="yarn livy hcat hbase flume hive oozie root"
+        PROXY_SUPER="yarn livy hcat hbase flume hive oozie"
         PROXY_USERONLY="HTTP ambari-server knox"
         SMOKE_USER="ambari-qa"
         ;;
@@ -282,35 +282,32 @@ done
 # Special cases
 case "$DIST" in
     "cdh")
-        #Deal with special cases on Isilon 
-	isi auth groups modify sqoop$CLUSTER_NAME --add-user sqoop2$CLUSTER_NAME --zone $ZONE
+        #Deal with special cases on Isilon
+        isi auth groups modify sqoop$CLUSTER_NAME --add-user sqoop2$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in zone $ZONE"
         isi auth groups modify hive$CLUSTER_NAME --add-user impala$CLUSTER_NAME --zone $ZONE
-        [ $? -ne 0 ] && addError "Could not add user implala$CLUSTER_NAME to hive$CLUSTER_NAME group in zone $ZONE"
-	isi auth groups modify hadoop$CLUSTER_NAME --add-user hbase$CLUSTER_NAME --zone $ZONE
-        [ $? -ne 0 ] && addError "Could not add user hbase$CLUSTER_NAME to hadoop$CLUSTER_NAME group in zone $ZONE"
-	
-	#Set some varliables to take these special case group assignments to the group file
+        [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in zone $ZONE"
+
+        #Set some varliables to take these special case group assignments to the group file
         sqp=`grep sqoop$CLUSTER_NAME $grpfile`
         hve=`grep hive$CLUSTER_NAME $grpfile`
 
-	#manipulate the group file for special cases
+        #manipulate the group file for special cases
         sed -i .bak /$sqp/d $grpfile
-        echo "$sqp,sqoop2" | cat >> $grpfile
+        echo "$sqp,sqoop2$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
         sed -i .bak /$hve/d $grpfile
-        echo "$hve,impala" | cat >> $grpfile
+        echo "$hve,impala$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in $grpfile"
         ;;
     "bi")
-        isi auth groups modify users$CLUSTER_NAME --add-user hive$CLUSTER_NAME --zone $ZONE
-        [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to users$CLUSTER_NAME group in zone $ZONE"
         isi auth groups modify hcat$CLUSTER_NAME --add-user hive$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in zone $ZONE"
         hct=`grep hcat$CLUSTER_NAME: $grpfile`
         sed -i .bak /$hct/d $grpfile
         echo "$hct,hive$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in $grpfile"
+
         isi auth groups modify knox$CLUSTER_NAME --add-user kafka$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in zone $ZONE"
         knx=`grep knox$CLUSTER_NAME: $grpfile`
