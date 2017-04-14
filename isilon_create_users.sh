@@ -47,6 +47,57 @@ function addError() {
 
 function yesno() {
    [ -n "$1" ] && myPrompt=">>> $1 (y/n)? "
+isilon_create_users.sh: 337 lines, 11866 characters
+hop-isi-c-1# cat isilon_create_users.sh
+#!/bin/bash
+###########################################################################
+##  Script to create Hadoop users on Isilon.
+##  Must be run on Isilon system as root.
+###########################################################################
+
+if [ -z "$BASH_VERSION" ] ; then
+   # probably using zsh...
+   echo "Script not run from bash -- reinvoking under bash"
+   bash "$0"
+   exit $?
+fi
+
+declare -a ERRORLIST=()
+
+DIST=""
+STARTUID=1000
+STARTGID=1000
+ZONE="System"
+CLUSTER_NAME=""
+VERBOSE="n"
+
+function banner() {
+   echo "##################################################################################"
+   echo "## $*"
+   echo "##################################################################################"
+}
+
+function usage() {
+   echo "$0 --dist <cdh|hwx|bi> [--startgid <GID>] [--startuid <UID>] [--zone <ZONE>] [--append-cluster-name <clustername>]"
+   exit 1
+}
+
+function fatal() {
+   echo "FATAL:  $*"
+   exit 1
+}
+
+function warn() {
+   echo "ERROR:  $*"
+   ERRORLIST[${#ERRORLIST[@]}]="$*"
+}
+
+function addError() {
+   ERRORLIST+=("$*")
+}
+
+function yesno() {
+   [ -n "$1" ] && myPrompt=">>> $1 (y/n)? "
    [ -n "$1" ] || myPrompt=">>> Please enter yes/no: "
    read -rp "$myPrompt" yn
    [ "z${yn:0:1}" = "zy" -o "z${yn:0:1}" = "zY" ] && return 0
@@ -185,7 +236,7 @@ case "$DIST" in
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
-        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr acctivity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
+        SUPER_USERS="hdfs mapred yarn hbase storm titan falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr acctivity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
         if [ "$ZONE" != "System" ]; then
@@ -260,7 +311,7 @@ for group in $SUPER_GROUPS; do
         user="$user$CLUSTER_NAME"
         isi auth groups modify $group --add-user $user --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user $user to $group group in zone $ZONE"
-        sprgrp="$sprgrp,$user"
+        sprgrp="$sprgrp$user,"
     done
     sed -i .bak /$group/d $grpfile
     echo $sprgrp | cat >> $grpfile
@@ -289,15 +340,19 @@ case "$DIST" in
         [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in zone $ZONE"
 
         #Set some varliables to take these special case group assignments to the group file
-        sqp=`grep sqoop$CLUSTER_NAME $grpfile`
-        hve=`grep hive$CLUSTER_NAME $grpfile`
+        sqp=`grep "\bsqoop$CLUSTER_NAME\b": $grpfile`
+        sqp2=`grep "\bsqoop2$CLUSTER_NAME\b": $grpfile`
+        hve=`grep "\bhive$CLUSTER_NAME\b": $grpfile`
 
         #manipulate the group file for special cases
         sed -i .bak /$sqp/d $grpfile
-        echo "$sqp,sqoop2$CLUSTER_NAME" | cat >> $grpfile
+        sed -i .bak /$sqp2/d $grpfile
+        echo "$sqp""sqoop2$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
+        echo "$sqp2""sqoop$CLUSTER_NAME" | cat >> $grpfile
+        [ $? -ne 0 ] && addError "Could not add user sqoop$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
         sed -i .bak /$hve/d $grpfile
-        echo "$hve,impala$CLUSTER_NAME" | cat >> $grpfile
+        echo "$hve""impala$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in $grpfile"
         ;;
     "bi")
@@ -307,7 +362,6 @@ case "$DIST" in
         sed -i .bak /$hct/d $grpfile
         echo "$hct,hive$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in $grpfile"
-
         isi auth groups modify knox$CLUSTER_NAME --add-user kafka$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in zone $ZONE"
         knx=`grep knox$CLUSTER_NAME: $grpfile`
