@@ -47,57 +47,6 @@ function addError() {
 
 function yesno() {
    [ -n "$1" ] && myPrompt=">>> $1 (y/n)? "
-isilon_create_users.sh: 337 lines, 11866 characters
-hop-isi-c-1# cat isilon_create_users.sh
-#!/bin/bash
-###########################################################################
-##  Script to create Hadoop users on Isilon.
-##  Must be run on Isilon system as root.
-###########################################################################
-
-if [ -z "$BASH_VERSION" ] ; then
-   # probably using zsh...
-   echo "Script not run from bash -- reinvoking under bash"
-   bash "$0"
-   exit $?
-fi
-
-declare -a ERRORLIST=()
-
-DIST=""
-STARTUID=1000
-STARTGID=1000
-ZONE="System"
-CLUSTER_NAME=""
-VERBOSE="n"
-
-function banner() {
-   echo "##################################################################################"
-   echo "## $*"
-   echo "##################################################################################"
-}
-
-function usage() {
-   echo "$0 --dist <cdh|hwx|bi> [--startgid <GID>] [--startuid <UID>] [--zone <ZONE>] [--append-cluster-name <clustername>]"
-   exit 1
-}
-
-function fatal() {
-   echo "FATAL:  $*"
-   exit 1
-}
-
-function warn() {
-   echo "ERROR:  $*"
-   ERRORLIST[${#ERRORLIST[@]}]="$*"
-}
-
-function addError() {
-   ERRORLIST+=("$*")
-}
-
-function yesno() {
-   [ -n "$1" ] && myPrompt=">>> $1 (y/n)? "
    [ -n "$1" ] || myPrompt=">>> Please enter yes/no: "
    read -rp "$myPrompt" yn
    [ "z${yn:0:1}" = "zy" -o "z${yn:0:1}" = "zY" ] && return 0
@@ -358,15 +307,15 @@ case "$DIST" in
     "bi")
         isi auth groups modify hcat$CLUSTER_NAME --add-user hive$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in zone $ZONE"
-        hct=`grep hcat$CLUSTER_NAME: $grpfile`
+        hct=`grep "\bhcat$CLUSTER_NAME\b": $grpfile`
         sed -i .bak /$hct/d $grpfile
-        echo "$hct,hive$CLUSTER_NAME" | cat >> $grpfile
+        echo "$hct""hive$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in $grpfile"
         isi auth groups modify knox$CLUSTER_NAME --add-user kafka$CLUSTER_NAME --zone $ZONE
         [ $? -ne 0 ] && addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in zone $ZONE"
-        knx=`grep knox$CLUSTER_NAME: $grpfile`
+        knx=`grep "\bknox$CLUSTER_NAME\b": $grpfile`
         sed -i .bak /$knx/d $grpfile
-        echo "$knx,kafka$CLUSTER_NAME" | cat >> $grpfile
+        echo "$knx""kafka$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in $grpfile"
         ;;
 esac
