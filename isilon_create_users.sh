@@ -299,7 +299,7 @@ case "$DIST" in
         echo "$sqp""sqoop2$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
         echo "$sqp2""sqoop$CLUSTER_NAME" | cat >> $grpfile
-        [ $? -ne 0 ] && addError "Could not add user sqoop$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
+        [ $? -ne 0 ] && addError "Could not add user sqoop$CLUSTER_NAME to sqoop2$CLUSTER_NAME group in $grpfile"
         sed -i .bak /$hve/d $grpfile
         echo "$hve""impala$CLUSTER_NAME" | cat >> $grpfile
         [ $? -ne 0 ] && addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in $grpfile"
