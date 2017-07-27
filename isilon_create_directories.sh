@@ -125,11 +125,11 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will use users in zone:  $ZONE"
              ;;
       "--fixperm")
-             echo "Info: will fix permissions and owners on existing directories created by this script."
+             echo "Info: fix permissions and ownership if directories already exist."
              FIXPERM="y"
              ;;
       "--posix-only")
-             echo "Info: will remove all existing permissions, including ACEs, before setting POSIX permissions."
+             echo "Info: remove all existing permissions, including ACEs, before setting POSIX permissions."
              POSIX="y"
              ;;
       "--verbose")
@@ -304,7 +304,7 @@ for direntry in ${dirList[*]}; do
       # echo "DEBUG:  fixing directory perm $ifspath"
       fixperm $ifspath ${specs[2]} ${specs[3]} ${specs[1]}
    else
-      warn "Directory $ifspath exists but no --fixperm not specified"
+      warn "Directory $ifspath exists. To set expected permissions use the --fixperm flag"
    fi
 
 done
