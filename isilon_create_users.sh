@@ -167,6 +167,9 @@ case "$DIST" in
         SUPER_USERS="hdfs mapred yarn HTTP hbase"
         SUPER_GROUPS="hadoop supergroup"
         REQUIRED_USERS="$SUPER_USERS hive impala hue cloudera-scm accumulo flume httpfs apache kafka kms keytrustee kudu llama oozie solr spark sentry sqoop sqoop2 zookeeper anonymous cmjobuser"
+        if [ "$ZONE" != "System" ]; then
+          REQUIRED_USERS="$REQUIRED_USERS admin"
+        fi
         REQUIRED_GROUPS="$REQUIRED_USERS $SUPER_GROUPS"
         PROXY_SUPER="impala flume hive hue oozie mapred"
         PROXY_USERONLY="HTTP"
