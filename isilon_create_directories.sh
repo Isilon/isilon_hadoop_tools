@@ -172,7 +172,6 @@ case "$DIST" in
             "/user/spark#751#spark#spark" \
             "/user/spark/applicationHistory#1777#spark#spark" \
             "/user/sqoop2#775#sqoop2#sqoop" \
-            "/solr#775#solr#solr" \
         )
         ;;
     "hwx")
