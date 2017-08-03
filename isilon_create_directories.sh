@@ -125,11 +125,11 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will use users in zone:  $ZONE"
              ;;
       "--fixperm")
-             echo "Info: will fix permissions and owners on existing directories created by this script."
+             echo "Info: fix permissions and ownership if directories already exist."
              FIXPERM="y"
              ;;
       "--posix-only")
-             echo "Info: will remove all existing permissions, including ACEs, before setting POSIX permissions."
+             echo "Info: remove all existing permissions, including ACEs, before setting POSIX permissions."
              POSIX="y"
              ;;
       "--verbose")
@@ -150,11 +150,11 @@ done
 
 declare -a dirList
 
+# Per-distribution list of folders with permissions and owners
 case "$DIST" in
     "cdh")
         # Format is: dirname#perm#owner#group
         dirList=(\
-            "/#755#hdfs#hadoop" \
             "/hbase#755#hbase#hbase" \
             "/solr#775#solr#solr" \
             "/tmp#1777#hdfs#supergroup" \
@@ -172,14 +172,12 @@ case "$DIST" in
             "/user/spark#751#spark#spark" \
             "/user/spark/applicationHistory#1777#spark#spark" \
             "/user/sqoop2#775#sqoop2#sqoop" \
-            "/solr#775#solr#solr" \
         )
         ;;
     "hwx")
  	# Format is: dirname#perm#owner#group
 	# The directory list below is good thru HDP 2.4
         dirList=(\
-            "/#755#hdfs#hadoop" \
             "/app-logs#777#yarn#hadoop" \
             "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
             "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
@@ -212,7 +210,6 @@ case "$DIST" in
  	# Format is: dirname#perm#owner#group
 	#The directory list is good thru IBM BI v 4.2
         dirList=(\
-            "/#755#hdfs#hadoop" \
             "/tmp#1777#hdfs#hadoop" \
             "/tmp/hive#777#ambari-qa#hadoop"
             "/user#755#hdfs#hadoop" \
@@ -274,6 +271,9 @@ fi
 
 banner "Creates Hadoop directory structure on Isilon system HDFS."
 
+# Set permissions on HDFS root
+fixperm $HDFSROOT "hdfs$CLUSTER_NAME" "hadoop$CLUSTER_NAME" "755"
+
 prefix=0
 # Cycle through directory entries comparing owner, group, perm
 # Sample output from "ls -dl"  command below
@@ -304,7 +304,7 @@ for direntry in ${dirList[*]}; do
       # echo "DEBUG:  fixing directory perm $ifspath"
       fixperm $ifspath ${specs[2]} ${specs[3]} ${specs[1]}
    else
-      warn "Directory $ifspath exists but no --fixperm not specified"
+      warn "Directory $ifspath exists. To set expected permissions use the --fixperm flag"
    fi
 
 done
