@@ -202,6 +202,7 @@ case "$DIST" in
             "/user/hive#700#hive#hdfs" \
             "/user/hue#755#hue#hue" \
             "/user/oozie#775#oozie#hdfs" \
+	    "/user/anonymous#775#hdfs#hdfs" \
             "/user/yarn#755#yarn#hdfs" \
             "/system/yarn/node-labels#700#yarn#hadoop" \
         )
