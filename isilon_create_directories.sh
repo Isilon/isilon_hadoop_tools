@@ -161,6 +161,7 @@ case "$DIST" in
             "/tmp/logs#1777#mapred#hadoop" \
             "/tmp/hive#777#hive#supergroup" \
             "/user#755#hdfs#supergroup" \
+	    "/user/hdfs#755#hdfs#hdfs" \
             "/user/history#777#mapred#hadoop" \
             "/user/hive#775#hive#hive" \
             "/user/hive/warehouse#1777#hive#hive" \
