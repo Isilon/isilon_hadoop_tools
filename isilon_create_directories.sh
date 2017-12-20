@@ -161,6 +161,7 @@ case "$DIST" in
             "/tmp/logs#1777#mapred#hadoop" \
             "/tmp/hive#777#hive#supergroup" \
             "/user#755#hdfs#supergroup" \
+            "/user/hdfs#755#hdfs#hdfs" \
             "/user/history#777#mapred#hadoop" \
             "/user/hive#775#hive#hive" \
             "/user/hive/warehouse#1777#hive#hive" \
@@ -175,8 +176,8 @@ case "$DIST" in
         )
         ;;
     "hwx")
- 	# Format is: dirname#perm#owner#group
-	# The directory list below is good thru HDP 2.4
+        # Format is: dirname#perm#owner#group
+        # The directory list below is good thru HDP 2.4
         dirList=(\
             "/app-logs#777#yarn#hadoop" \
             "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
@@ -207,8 +208,8 @@ case "$DIST" in
         )
         ;;
     "bi")
- 	# Format is: dirname#perm#owner#group
-	#The directory list is good thru IBM BI v 4.2
+        # Format is: dirname#perm#owner#group
+        #The directory list is good thru IBM BI v 4.2
         dirList=(\
             "/tmp#1777#hdfs#hadoop" \
             "/tmp/hive#777#ambari-qa#hadoop"
