@@ -182,6 +182,7 @@ case "$DIST" in
             "/app-logs#777#yarn#hadoop" \
             "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
             "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
+            "/ats/done#775#yarn#hdfs" \
             "/tmp#1777#hdfs#hdfs" \
             "/tmp/hive#777#ambari-qa#hdfs" \
             "/apps#755#hdfs#hadoop" \
