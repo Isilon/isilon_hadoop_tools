@@ -179,7 +179,7 @@ case "$DIST" in
         # Format is: dirname#perm#owner#group
         # The directory list below is good thru HDP 2.4
         dirList=(\
-            "/app-logs#777#yarn#hadoop" \
+            "/app-logs#1777#yarn#hadoop" \
             "/app-logs/ambari-qa#770#ambari-qa#hadoop" \
             "/app-logs/ambari-qa/logs#770#ambari-qa#hadoop" \
             "/ats/done#775#yarn#hdfs" \
