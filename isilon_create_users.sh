@@ -176,7 +176,7 @@ case "$DIST" in
         SMOKE_USER="cloudera-scm"
         ;;
     "hwx")
-        SUPER_USERS="hdfs mapred yarn hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server druid keyadmin rangerlookup yarn-ats"
+        SUPER_USERS="hdfs mapred yarn yarn-ats-hbase hbase storm falcon tracer tez hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server druid keyadmin rangerlookup yarn-ats"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
         if [ "$ZONE" != "System" ]; then
@@ -188,7 +188,7 @@ case "$DIST" in
         SMOKE_USER="ambari-qa"
         ;;
     "bi")
-        SUPER_USERS="hdfs mapred yarn hbase storm titan falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
+        SUPER_USERS="hdfs mapred yarn yarn-ats-hbase hbase storm titan falcon tracer hive hcat oozie zookeeper ambari-qa flume hue accumulo hadoopqa sqoop spark mahout ranger kms atlas ams kafka zeppelin livy logsearch infra-solr activity_analyzer activity_explorer HTTP knox ambari-server uiuser dsmadmin bigsheets rrdcached bigsql tauser bigr solr bighome"
         SUPER_GROUPS="hadoop"
         REQUIRED_USERS="$SUPER_USERS anonymous"
         if [ "$ZONE" != "System" ]; then
