@@ -257,7 +257,7 @@ done
 
 for group in $SUPER_GROUPS; do
     group="$group$CLUSTER_NAME"
-    sprgrp=`grep $group $grpfile`
+    sprgrp="$(grep "$group:" "$grpfile")"
     [ $? -ne 0 ] && addError "Could not locate entry $group in group file stub $grpfile"
     for user in $SUPER_USERS; do
         user="$user$CLUSTER_NAME"
@@ -265,8 +265,8 @@ for group in $SUPER_GROUPS; do
         [ $? -ne 0 ] && addError "Could not add user $user to $group group in zone $ZONE"
         sprgrp="$sprgrp$user,"
     done
-    sed -i .bak /$group/d $grpfile
-    echo $sprgrp | cat >> $grpfile
+    sed -i .bak "/$group:/d" "$grpfile"
+    echo "$sprgrp" >> "$grpfile"
 done
 # set +x
 
