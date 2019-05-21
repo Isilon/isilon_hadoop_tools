@@ -245,7 +245,7 @@ for user in $REQUIRED_USERS; do
        user=$(getUserFromUid $uid $ZONE)
        addError "UID $uid already in use by user $user in zone $ZONE"
     else
-       isi auth users create $user --uid $uid --primary-group $user --zone $ZONE --provider local
+       isi auth users create $user --uid $uid --primary-group $user --zone $ZONE --provider local --enabled yes
        [ $? -ne 0 ] && addError "Could not create user $user with uid $uid in zone $ZONE"
        gid=$(getGidFromGroup $user $ZONE)
        echo "$user:x:$uid:$gid:hadoop-svc-account:/home/$user:/bin/bash" | cat >> $passwdfile
