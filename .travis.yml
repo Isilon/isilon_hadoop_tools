@@ -7,4 +7,4 @@ before_install: pip install --upgrade pip setuptools wheel
 install: pip install --upgrade tox-travis
 script:
   - tox -- -r a
-  - if [ "$TRAVIS_PYTHON_VERSION" = '3.5' ]; then tox -e style; fi
+  - if [ "$TRAVIS_PYTHON_VERSION" = '3.5' ]; then tox -e static; fi
