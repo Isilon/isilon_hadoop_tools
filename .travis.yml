@@ -1,10 +1,22 @@
 language: python
 python:
-  - '2.7'
-  - '3.5'
-  - '3.6'
+- '2.7'
+- '3.5'
+- '3.6'
 before_install: pip install --upgrade pip setuptools wheel
 install: pip install --upgrade tox-travis
 script:
-  - tox -- -r a
-  - if [ "$TRAVIS_PYTHON_VERSION" = '3.5' ]; then tox -e static; fi
+- tox -- -r a
+- if [ "$TRAVIS_PYTHON_VERSION" = '3.5' ]; then tox -e static; fi
+deploy:
+  provider: pypi
+  user: __token__
+  password:
+    secure: QVAoGGiO03G1WFDLvcrBUvnnH4YE8YzHTrd2mIT8AOyhGZ9q40b5GU/TtRg0/7O+u2XwCa0L/kIhCbUwSAQ50uCYb1OTTwL2dPdI2s8BAj0Ds6ExdBCEEkwz06awdAtHSoOeqgt6DoGMFnt3ok7vzh3XX/rh6OecJ/R/c/JwPWpwG15RRdgFkqP8E93Rc+OaakVSXHgBtG9X9kui0GTRo/90tsmo9EwQqGQUHUSFTg1GOpOI9IdxX5iC77M5AAiYEORJKWriAYPAWcos1oxLKSZsC0Qx3K9K3W2osy0CfaSkCYpH13hYIFiGVlgQ9dqOLenbc4k8Yuj1fG+ye3Cwn4jUeRlxYDVChzgHEmDxGkeuRzdwUF37czcnxudlKEg447VLzjk+pRMGz2FXTpX6ve3RpAXgptnw/RBMbgYl09dIf5CFoWfeTxIn6t5oPVPB53hm7+mmmwe7jojd2V07N/tGNTrbvGwC4FKihwjpBZeXhQsiLRdhGa5jLtcarurYOVSYTMNsPX0DusjRAwrS0BaqprhsSSI2QY7bokUVBWstOKNAIPk8yGWmDhY3TGn/9TpBP4hOS8mmf8Tug1EA8VCAFcIq7qYluJngekdfGp4nHqsmrzHXU/OCvJgLgSVgOqNp8jrdis7Kl5uW3zYpKtZpHJMl70BHbJYRnWOtyzg=
+  distributions: sdist bdist_wheel
+  on:
+    repo: Isilon/isilon_hadoop_tools
+    branch: master
+    tags: true
+    python: '3.5'
+  skip_existing: true
