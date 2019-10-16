@@ -43,9 +43,9 @@ venv/bin/isilon_create_users --help
 
 ### Continuous Integration
 
-[Travis CI](https://travis-ci.org/) ensures the build never breaks and the tests always pass.
+[Travis CI](https://travis-ci.com/) ensures the build never breaks and the tests always pass.
 
-[![Build Status](https://travis-ci.org/Isilon/isilon_hadoop_tools.svg?branch=master)](https://travis-ci.org/Isilon/isilon_hadoop_tools)
+[![Build Status](https://travis-ci.com/Isilon/isilon_hadoop_tools.svg?branch=master)](https://travis-ci.com/Isilon/isilon_hadoop_tools)
 
 It also deploys releases to the package repository automatically (see below).
 
