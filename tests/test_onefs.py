@@ -78,6 +78,7 @@ def test_api_error_str(api_error):
         (onefs.ONEFS_RELEASES['8.1.2.0'], isi_sdk_8_1_1),
         (onefs.ONEFS_RELEASES['8.2.0.0'], isi_sdk_8_2_0),
         (onefs.ONEFS_RELEASES['8.2.1.0'], isi_sdk_8_2_0),
+        (onefs.ONEFS_RELEASES['8.2.2.0'], isi_sdk_8_2_0),
         (float('inf'), isi_sdk_8_2_0),
     ],
 )

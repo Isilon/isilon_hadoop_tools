@@ -59,17 +59,18 @@ __all__ = [
 
 LOGGER = logging.getLogger(__name__)
 ONEFS_RELEASES = {
-    '7.2.0.0': 0x70200500000000A,  # Moby
-    '8.0.0.0': 0x800005000000025,  # Riptide
+    '7.2.0.0': 0x70200500000000A,
+    '8.0.0.0': 0x800005000000025,
     '8.0.0.4': 0x800005000400035,
-    '8.0.1.0': 0x800015000000007,  # Halfpipe
+    '8.0.1.0': 0x800015000000007,
     '8.0.1.1': 0x800015000100070,
-    '8.1.0.0': 0x80100500000000B,  # Freight Trains
-    '8.1.1.0': 0x8010150000000D4,  # Niijima
-    '8.1.2.0': 0x801025000000010,  # Kanagawa
-    '8.1.3.0': 0x80103500000000D,  # Seismic
-    '8.2.0.0': 0x802005000000009,  # Pipeline
-    '8.2.1.0': 0x802010000000000,  # Acela (TBD)
+    '8.1.0.0': 0x80100500000000B,
+    '8.1.1.0': 0x8010150000000D4,
+    '8.1.2.0': 0x801025000000010,
+    '8.1.3.0': 0x80103500000000D,
+    '8.2.0.0': 0x80200500000000B,
+    '8.2.1.0': 0x802015000000004,
+    '8.2.2.0': 0x802025000000000,
 }
 
 
@@ -517,6 +518,9 @@ def sdk_for_revision(revision, strict=False):
         import isi_sdk_8_1_1
         return isi_sdk_8_1_1
     if ONEFS_RELEASES['8.2.0.0'] <= revision < ONEFS_RELEASES['8.2.1.0']:
+        import isi_sdk_8_2_0
+        return isi_sdk_8_2_0
+    if ONEFS_RELEASES['8.2.1.0'] <= revision < ONEFS_RELEASES['8.2.2.0']:
         import isi_sdk_8_2_0
         return isi_sdk_8_2_0
     # At this point, either the cluster is too old or too new;
