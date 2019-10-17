@@ -87,7 +87,7 @@ def invalid_address(request, max_retry_exception_mock):
     try:
         # This is how the SDK checks whether localhost is OneFS:
         # https://github.com/Isilon/isilon_sdk_python/blob/19958108ec550865ebeb1f2a4d250322cf4681c2/isi_sdk/rest.py#L33
-        import isi.rest
+        __import__('isi.rest')
     except ImportError:
         # Different hostnames/addresses hit errors in different code paths.
         # The first error that can be hit is a socket.gaierror if a hostname is unresolvable.

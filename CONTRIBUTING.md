@@ -23,11 +23,11 @@ tox
 # Run a specific test with Python 2.7, and drop into Pdb if it fails:
 tox -e py27 -- -k test_catches --pdb
 
-# Run a Python REPL in a Python 3.5 development environment:
-tox -e py35-dev
+# Create a Python 3.5 development environment:
+tox -e py35 --devenv ./venv
 
-# Run an IHT console_script in a Python 3.6 dev env:
-tox -e py36-dev -- isilon_create_users --help
+# Run an IHT console_script in that environment:
+venv/bin/isilon_create_users --help
 ```
 
 ## Merges
@@ -43,9 +43,9 @@ tox -e py36-dev -- isilon_create_users --help
 
 ### Continuous Integration
 
-[Travis CI](https://travis-ci.org/) ensures the build never breaks and the tests always pass.
+[Travis CI](https://travis-ci.com/) ensures the build never breaks and the tests always pass.
 
-[![Build Status](https://travis-ci.org/Isilon/isilon_hadoop_tools.svg?branch=master)](https://travis-ci.org/Isilon/isilon_hadoop_tools)
+[![Build Status](https://travis-ci.com/Isilon/isilon_hadoop_tools.svg?branch=master)](https://travis-ci.com/Isilon/isilon_hadoop_tools)
 
 It also deploys releases to the package repository automatically (see below).
 

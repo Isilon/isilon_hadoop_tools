@@ -500,7 +500,7 @@ class UnsupportedOperation(OneFSError):
 
 def sdk_for_revision(revision, strict=False):
     """Get the SDK that is intended to work with a given OneFS revision."""
-    # pylint: disable=too-many-return-statements
+    # pylint: disable=too-many-return-statements,import-outside-toplevel
     if ONEFS_RELEASES['7.2.0.0'] <= revision < ONEFS_RELEASES['8.0.0.0']:
         import isi_sdk_7_2
         return isi_sdk_7_2

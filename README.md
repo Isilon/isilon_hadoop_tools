@@ -5,7 +5,7 @@ Tools for Using Hadoop with OneFS
 - `isilon_create_users` creates identities needed by Hadoop distributions compatible with OneFS.
 - `isilon_create_directories` creates a directory structure with appropriate ownership and permissions in HDFS on OneFS.
 
-![IHT Demo](demo.gif)
+![IHT Demo](https://github.com/Isilon/isilon_hadoop_tools/raw/master/demo.gif)
 
 ## Installation
 
@@ -195,4 +195,4 @@ If anything goes wrong (e.g. the script stopped because you forgot to run `isilo
 
 ## Development
 
-See [the Contributing Guidelines](CONTRIBUTING.md) for information on project development.
+See the [Contributing Guidelines](https://github.com/Isilon/isilon_hadoop_tools/blob/master/CONTRIBUTING.md) for information on project development.
