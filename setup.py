@@ -25,7 +25,7 @@ setuptools.setup(
     setup_requires=['setuptools_scm ~= 3.3'],
     install_requires=[
         'enum34 >= 1.1.6; python_version<"3.4"',
-        'future ~= 0.17.1',
+        'future >= 0.16.0',
         'isi-sdk-7-2 ~= 0.2.7',
         'isi-sdk-8-0 ~= 0.2.7',
         'isi-sdk-8-0-1 ~= 0.2.7',
