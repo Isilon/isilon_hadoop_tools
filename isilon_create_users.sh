@@ -209,10 +209,10 @@ HDFSROOT="$(getHdfsRoot "$ZONE")"
 echo "Info: HDFS root:  $HDFSROOT"
 passwdfile="$ZONE.passwd"
 echo "Info: passwd file: $passwdfile"
-echo "# use this file to add to the passwd file of your clients" | cat > "$passwdfile"
+echo "# use this file to add to the passwd file of your clients" > "$passwdfile"
 grpfile="$ZONE.group"
 echo "Info: group file: $grpfile"
-echo "# use this file to add to the group file of your clients" | cat > "$grpfile"
+echo "# use this file to add to the group file of your clients" > "$grpfile"
 
 gid="$STARTGID"
 for group in $REQUIRED_GROUPS; do
@@ -227,7 +227,7 @@ for group in $REQUIRED_GROUPS; do
     else
        isi auth groups create "$group" --gid "$gid" --zone "$ZONE" || \
             addError "Could not create group $group with gid $gid in zone $ZONE"
-       echo "$group:x:$gid:" | cat >> "$grpfile" || \
+       echo "$group:x:$gid:" >> "$grpfile" || \
             addError "Could not create entry in group file stub $grpfile for $group with gid $gid"
     fi
     gid="$(( gid + 1 ))"
@@ -248,7 +248,7 @@ for user in $REQUIRED_USERS; do
        isi auth users create "$user" --uid "$uid" --primary-group "$user" --zone "$ZONE" --provider local --enabled yes || \
             addError "Could not create user $user with uid $uid in zone $ZONE"
        gid="$(getGidFromGroup "$user" "$ZONE")"
-       echo "$user:x:$uid:$gid:hadoop-svc-account:/home/$user:/bin/bash" | cat >> "$passwdfile" || \
+       echo "$user:x:$uid:$gid:hadoop-svc-account:/home/$user:/bin/bash" >> "$passwdfile" || \
             addError "Could not create entry in passwd file stub $passwdfile for $user with uid $uid"
     fi
     uid="$(( uid + 1 ))"
@@ -298,12 +298,12 @@ case "$DIST" in
         #manipulate the group file for special cases
         sed -i .bak "/$sqp/d" "$grpfile"
         sed -i .bak "/$sqp2/d" "$grpfile"
-        echo "$sqp""sqoop2$CLUSTER_NAME" | cat >> "$grpfile" || \
+        echo "$sqp""sqoop2$CLUSTER_NAME" >> "$grpfile" || \
             addError "Could not add user sqoop2$CLUSTER_NAME to sqoop$CLUSTER_NAME group in $grpfile"
-        echo "$sqp2""sqoop$CLUSTER_NAME" | cat >> "$grpfile" || \
+        echo "$sqp2""sqoop$CLUSTER_NAME" >> "$grpfile" || \
             addError "Could not add user sqoop$CLUSTER_NAME to sqoop2$CLUSTER_NAME group in $grpfile"
         sed -i .bak "/$hve/d" "$grpfile"
-        echo "$hve""impala$CLUSTER_NAME" | cat >> "$grpfile" || \
+        echo "$hve""impala$CLUSTER_NAME" >> "$grpfile" || \
             addError "Could not add user impala$CLUSTER_NAME to hive$CLUSTER_NAME group in $grpfile"
         ;;
     "bi")
@@ -311,13 +311,13 @@ case "$DIST" in
             addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in zone $ZONE"
         hct="$(grep "\bhcat$CLUSTER_NAME\b": "$grpfile")"
         sed -i .bak "/$hct/d" "$grpfile"
-        echo "$hct""hive$CLUSTER_NAME" | cat >> "$grpfile" || \
+        echo "$hct""hive$CLUSTER_NAME" >> "$grpfile" || \
             addError "Could not add user hive$CLUSTER_NAME to hcat$CLUSTER_NAME group in $grpfile"
         isi auth groups modify "knox$CLUSTER_NAME" --add-user "kafka$CLUSTER_NAME" --zone "$ZONE" || \
             addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in zone $ZONE"
         knx="$(grep "\bknox$CLUSTER_NAME\b": "$grpfile")"
         sed -i .bak "/$knx/d" "$grpfile"
-        echo "$knx""kafka$CLUSTER_NAME" | cat >> "$grpfile" || \
+        echo "$knx""kafka$CLUSTER_NAME" >> "$grpfile" || \
             addError "Could not add user kafka$CLUSTER_NAME to knox$CLUSTER_NAME group in $grpfile"
         ;;
 esac
