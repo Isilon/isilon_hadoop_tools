@@ -45,7 +45,7 @@ function yesno() {
    [ -n "$1" ] && myPrompt=">>> $1 (y/n)? "
    [ -n "$1" ] || myPrompt=">>> Please enter yes/no: "
    read -rp "$myPrompt" yn
-   [ "z${yn:0:1}" = "zy" -o "z${yn:0:1}" = "zY" ] && return 0
+   [ "z${yn:0:1}" = "zy" ] || [ "z${yn:0:1}" = "zY" ] && return 0
 #   exit "DEBUG:  returning false from function yesno"
    return 1
 }
@@ -54,7 +54,7 @@ function makedir() {
    if [ "z$1" == "z" ] ; then
       echo "ERROR -- function makedir needs directory as an argument"
    else
-      mkdir -p $1
+      mkdir -p "$1"
    fi
 }
 
@@ -62,46 +62,46 @@ function fixperm() {
    if [ "z$1" == "z" ] ; then
       echo "ERROR -- function fixperm needs directory owner group perm as an argument"
    else
-      uid=$(getUserUid $2)
-      gid=$(getGroupGid $3)
-      chown $uid $1
-      chown :$gid $1
-      if [ "POSIX" == "y" ] ; then
-          chmod -D $1
+      uid="$(getUserUid "$2")"
+      gid="$(getGroupGid "$3")"
+      chown "$uid" "$1"
+      chown ":$gid" "$1"
+      if [ "$POSIX" == "y" ] ; then
+          chmod -D "$1"
       fi
-      chmod $4 $1
+      chmod "$4" "$1"
    fi
 }
 
 function getHdfsRoot() {
     local hdfsroot
     #Check for Version to process correct syntax - isirad
-    if [ "`isi version|cut -c 15`" -lt 8 ]; then
-      hdfsroot=$(isi zone zones view $1 | grep "HDFS Root Directory:" | cut -f2 -d :)
+    if [ "$(isi version|cut -c 15)" -lt 8 ]; then
+      hdfsroot="$(isi zone zones view "$1" | grep "HDFS Root Directory:" | cut -f2 -d :)"
     else
-      hdfsroot=$(isi hdfs settings view --zone=$1 | grep "Root Directory:" | cut -f2 -d :)
+      hdfsroot="$(isi hdfs settings view --zone="$1" | grep "Root Directory:" | cut -f2 -d :)"
     fi
-    echo $hdfsroot
+    echo "$hdfsroot" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
 
 #Params: Username
 #returns: UID
 function getUserUid() {
     local uid
-    uid=$(isi auth users view --zone $ZONE $1 | grep "  UID" | cut -f2 -d :)
-    echo $uid
+    uid="$(isi auth users view --zone "$ZONE" "$1" | grep "  UID" | cut -f2 -d :)"
+    echo "$uid" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
 
 #Params: GroupName
 #returns: GID
 function getGroupGid() {
     local gid
-    gid=$(isi auth groups view --zone $ZONE $1 | grep "  GID:" | cut -f2 -d :)
-    echo $gid
+    gid="$(isi auth groups view --zone "$ZONE" "$1" | grep "  GID:" | cut -f2 -d :)"
+    echo "$gid" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
 
 
-if [ "`uname`" != "Isilon OneFS" ]; then
+if [ "$(uname)" != "Isilon OneFS" ]; then
    fatal "Script must be run on Isilon cluster as root."
 fi
 
@@ -260,10 +260,10 @@ case "$DIST" in
         ;;
 esac
 
-HDFSROOT=$(getHdfsRoot $ZONE)
+HDFSROOT="$(getHdfsRoot "$ZONE")"
 echo "Info: HDFS root dir is $HDFSROOT"
 
-if [ ! -d $HDFSROOT ] ; then
+if [ ! -d "$HDFSROOT" ] ; then
    fatal "HDFS root $HDFSROOT does not exist!"
 fi
 
@@ -276,18 +276,17 @@ fi
 banner "Creates Hadoop directory structure on Isilon system HDFS."
 
 # Set permissions on HDFS root
-fixperm $HDFSROOT "hdfs$CLUSTER_NAME" "hadoop$CLUSTER_NAME" "755"
+fixperm "$HDFSROOT" "hdfs$CLUSTER_NAME" "hadoop$CLUSTER_NAME" "755"
 
-prefix=0
 # Cycle through directory entries comparing owner, group, perm
 # Sample output from "ls -dl"  command below
 # drwxrwxrwx    8 hdfs  hadoop  1024 Aug 26 03:01 /tmp
 
 for direntry in ${dirList[*]}; do
-   read -a specs <<<"$(echo $direntry | sed 's/#/ /g')"
+   IFS='#' read -ra specs <<< "$direntry"
 
    if [[ ${specs[0]} == /user/* ]] ; then
-     IFS='/' read -a path <<<"${specs[0]}"
+     IFS='/' read -ra path <<< "${specs[0]}"
      old_path="/user/${path[2]}"
      new_path="/user/${path[2]}$CLUSTER_NAME"
      specs[0]="${specs[0]/$old_path/$new_path}"
@@ -296,17 +295,17 @@ for direntry in ${dirList[*]}; do
    specs[3]="${specs[3]}$CLUSTER_NAME"
 
    echo "DEBUG: specs dirname ${specs[0]}; perm ${specs[1]}; owner ${specs[2]}; group ${specs[3]}"
-   ifspath=$HDFSROOT${specs[0]}
+   ifspath="$HDFSROOT${specs[0]}"
    # echo "DEBUG:  ifspath = $ifspath"
 
    #  Get info about directory
-   if [ ! -d $ifspath ] ; then
+   if [ ! -d "$ifspath" ] ; then
       # echo "DEBUG:  making directory $ifspath"
-      makedir $ifspath
-      fixperm $ifspath ${specs[2]} ${specs[3]} ${specs[1]}
+      makedir "$ifspath"
+      fixperm "$ifspath" "${specs[2]}" "${specs[3]}" "${specs[1]}"
    elif [ "$FIXPERM" == "y" ] ; then
       # echo "DEBUG:  fixing directory perm $ifspath"
-      fixperm $ifspath ${specs[2]} ${specs[3]} ${specs[1]}
+      fixperm "$ifspath" "${specs[2]}" "${specs[3]}" "${specs[1]}"
    else
       warn "Directory $ifspath exists. To set expected permissions use the --fixperm flag"
    fi
@@ -318,7 +317,7 @@ if [ "${#ERRORLIST[@]}" != "0" ] ; then
    i=0
    while [ $i -lt ${#ERRORLIST[@]} ]; do
       echo "ERROR:  ${ERRORLIST[$i]}"
-      i=$(($i + 1))
+      i="$((i + 1))"
    done
    fatal "ERRORS FOUND making Hadoop admin directory structure -- please fix before continuing"
    exit 1
