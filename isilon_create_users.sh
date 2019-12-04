@@ -141,7 +141,6 @@ while [ "z$1" != "z" ] ; do
              echo "Info: will put users in zone:  $ZONE"
              ;;
       "--verbose")
-             shift
              VERBOSE="y"
              echo "Info: Invoking verbose output."
              ;;
