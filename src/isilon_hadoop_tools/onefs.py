@@ -521,15 +521,15 @@ def sdk_for_revision(revision, strict=False):
         import isi_sdk_8_2_0
         return isi_sdk_8_2_0
     if ONEFS_RELEASES['8.2.1.0'] <= revision < ONEFS_RELEASES['8.2.2.0']:
-        import isi_sdk_8_2_0
-        return isi_sdk_8_2_0
+        import isi_sdk_8_2_1
+        return isi_sdk_8_2_1
     # At this point, either the cluster is too old or too new;
     # however, new clusters still support old SDKs,
     # so, unless the caller asks to fail here, we'll fall back to the newest supported SDK.
     if strict:
         raise UnsupportedVersion('There is no SDK for OneFS revision {0}!'.format(hex(revision)))
-    import isi_sdk_8_2_0
-    return isi_sdk_8_2_0  # The latest SDK available.
+    import isi_sdk_8_2_1
+    return isi_sdk_8_2_1  # The latest SDK available.
 
 
 def accesses_onefs(func):
