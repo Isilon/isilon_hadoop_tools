@@ -33,6 +33,7 @@ setuptools.setup(
         'isi-sdk-8-1-1 ~= 0.2.7',
         'isi-sdk-8-2-0 ~= 0.2.7',
         'isi-sdk-8-2-1 ~= 0.2.7',
+        'isi-sdk-8-2-2 ~= 0.2.7',
         'requests >= 2.20.0',
         'setuptools >= 41.0.0',
     ],
