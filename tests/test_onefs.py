@@ -22,6 +22,7 @@ import isi_sdk_8_1_0
 import isi_sdk_8_1_1
 import isi_sdk_8_2_0
 import isi_sdk_8_2_1
+import isi_sdk_8_2_2
 import pytest
 
 from isilon_hadoop_tools import IsilonHadoopToolError, onefs
@@ -68,7 +69,7 @@ def test_api_error_str(api_error):
 @pytest.mark.parametrize(
     'revision, expected_sdk',
     [
-        (0, isi_sdk_8_2_1),
+        (0, isi_sdk_8_2_2),
         (onefs.ONEFS_RELEASES['7.2.0.0'], isi_sdk_7_2),
         (onefs.ONEFS_RELEASES['8.0.0.0'], isi_sdk_8_0),
         (onefs.ONEFS_RELEASES['8.0.0.4'], isi_sdk_8_0),
@@ -79,8 +80,9 @@ def test_api_error_str(api_error):
         (onefs.ONEFS_RELEASES['8.1.2.0'], isi_sdk_8_1_1),
         (onefs.ONEFS_RELEASES['8.2.0.0'], isi_sdk_8_2_0),
         (onefs.ONEFS_RELEASES['8.2.1.0'], isi_sdk_8_2_1),
-        (onefs.ONEFS_RELEASES['8.2.2.0'], isi_sdk_8_2_1),
-        (float('inf'), isi_sdk_8_2_1),
+        (onefs.ONEFS_RELEASES['8.2.2.0'], isi_sdk_8_2_2),
+        (onefs.ONEFS_RELEASES['8.2.3.0'], isi_sdk_8_2_2),
+        (float('inf'), isi_sdk_8_2_2),
     ],
 )
 def test_sdk_for_revision(revision, expected_sdk):
