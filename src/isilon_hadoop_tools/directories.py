@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 import logging
 import posixpath
 
+import isilon_hadoop_tools.onefs
 from isilon_hadoop_tools import IsilonHadoopToolError
-
 
 __all__ = [
     # Exceptions
@@ -62,7 +62,13 @@ class Creator(object):
         for directory in directories:
             path = posixpath.join(zone_hdfs, directory.path.lstrip(posixpath.sep))
             LOGGER.info("mkdir '%s%s'", zone_root, path)
-            (mkdir or self.onefs.mkdir)(path, directory.mode, zone=self.onefs_zone)
+            try:
+                (mkdir or self.onefs.mkdir)(path, directory.mode, zone=self.onefs_zone)
+            except isilon_hadoop_tools.onefs.APIError as exc:
+                if exc.dir_path_already_exists_error():
+                    LOGGER.warning("%s%s already exists. ", zone_root, path)
+                else:
+                    raise
             LOGGER.info("chmod '%o' '%s%s'", directory.mode, zone_root, path)
             (chmod or self.onefs.chmod)(path, directory.mode, zone=self.onefs_zone)
             LOGGER.info("chown '%s:%s' '%s%s'", directory.owner, directory.group, zone_root, path)
