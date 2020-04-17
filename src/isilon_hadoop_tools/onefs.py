@@ -288,6 +288,8 @@ class APIError(_BaseAPIError):
     user_not_found_error_format = "Failed to find user for 'USER:{0}': No such user"
     user_unresolvable_error_format = "Could not resolve user {0}"
     zone_not_found_error_format = 'Access Zone "{0}" not found.'
+    dir_path_already_exists_error_format = \
+        'Unable to create directory as requested -- container already exists'
     # pylint: enable=invalid-name
 
     def __str__(self):
@@ -456,6 +458,14 @@ class APIError(_BaseAPIError):
                 lambda error: error['message'] == self.zone_not_found_error_format.format(
                     zone_name,
                 ),
+            )
+        )
+
+    def dir_path_already_exists_error(self):
+        """Returns True if the exception contains a directory path already exist error."""
+        return any(
+            self.filtered_errors(
+                lambda error: error['message'] == self.dir_path_already_exists_error_format,
             )
         )
 
