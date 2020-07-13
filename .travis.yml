@@ -4,6 +4,7 @@ python:
 - '3.5'
 - '3.6'
 - '3.7'
+- '3.8'
 before_install: pip install --upgrade pip setuptools wheel
 install: pip install --upgrade tox-travis
 script:
