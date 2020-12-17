@@ -26,7 +26,7 @@ def test_not_catches(exception):
 
 
 @pytest.mark.parametrize(
-    'error, classinfo',
+    "error, classinfo",
     [
         (cli.CLIError, IsilonHadoopToolError),
         (cli.HintedError, cli.CLIError),

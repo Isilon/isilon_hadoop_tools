@@ -14,19 +14,17 @@ import isilon_hadoop_tools.onefs
 
 __all__ = [
     # Decorators
-    'catches',
-
+    "catches",
     # Exceptions
-    'CLIError',
-    'HintedError',
-
+    "CLIError",
+    "HintedError",
     # Functions
-    'base_cli',
-    'configure_logging',
-    'hdfs_client',
-    'logging_cli',
-    'onefs_cli',
-    'onefs_client',
+    "base_cli",
+    "configure_logging",
+    "hdfs_client",
+    "logging_cli",
+    "onefs_cli",
+    "onefs_client",
 ]
 
 LOGGER = logging.getLogger(__name__)
@@ -38,8 +36,10 @@ class CLIError(isilon_hadoop_tools.IsilonHadoopToolError):
 
 def catches(exception):
     """Create a decorator for functions that emit the specified exception."""
+
     def decorator(func):
         """Decorate a function that should catch instances of the specified exception."""
+
         def decorated(*args, **kwargs):
             """Catch instances of a specified exception that are raised from the function."""
             try:
@@ -47,25 +47,32 @@ def catches(exception):
             except exception as ex:
                 logging.error(ex)
                 return 1
+
         return decorated
+
     return decorator
 
 
 def base_cli(parser=None):
     """Define common CLI arguments and options."""
     if parser is None:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    onefs_cli(parser.add_argument_group('OneFS'))
-    logging_cli(parser.add_argument_group('Logging'))
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
+    onefs_cli(parser.add_argument_group("OneFS"))
+    logging_cli(parser.add_argument_group("Logging"))
     return parser
 
 
 def onefs_cli(parser=None):
     """Define OneFS CLI arguments and options."""
     if parser is None:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
     parser.add_argument(
-        "--zone", "-z",
+        "--zone",
+        "-z",
         help="Specify a OneFS access zone.",
         type=str,
         required=True,
@@ -105,7 +112,7 @@ class HintedError(CLIError):
 
     def __str__(self):
         base_str = super(HintedError, self).__str__()
-        return str(getattr(self, '__cause__', None)) + '\nHint: ' + base_str
+        return str(getattr(self, "__cause__", None)) + "\nHint: " + base_str
 
 
 def _client_from_onefs_cli(init, args):
@@ -113,13 +120,15 @@ def _client_from_onefs_cli(init, args):
         return init(
             address=args.onefs_address,
             username=args.onefs_user,
-            password=getpass.getpass() if args.onefs_password is None else args.onefs_password,
+            password=getpass.getpass()
+            if args.onefs_password is None
+            else args.onefs_password,
             default_zone=args.zone,
             verify_ssl=not args.no_verify,
         )
     except isilon_hadoop_tools.onefs.OneFSCertificateError as exc:
         raise_from(
-            HintedError('--no-verify can be used to skip certificate verification.'),
+            HintedError("--no-verify can be used to skip certificate verification."),
             exc,
         )
     except isilon_hadoop_tools.onefs.MissingLicenseError as exc:
@@ -127,15 +136,19 @@ def _client_from_onefs_cli(init, args):
             CLIError(
                 (
                     isilon_hadoop_tools.onefs.APIError.license_expired_error_format
-                    if isinstance(exc, isilon_hadoop_tools.onefs.ExpiredLicenseError) else
-                    isilon_hadoop_tools.onefs.APIError.license_missing_error_format
+                    if isinstance(exc, isilon_hadoop_tools.onefs.ExpiredLicenseError)
+                    else isilon_hadoop_tools.onefs.APIError.license_missing_error_format
                 ).format(exc),
             ),
             exc,
         )
     except isilon_hadoop_tools.onefs.MissingZoneError as exc:
         raise_from(
-            CLIError(isilon_hadoop_tools.onefs.APIError.zone_not_found_error_format.format(exc)),
+            CLIError(
+                isilon_hadoop_tools.onefs.APIError.zone_not_found_error_format.format(
+                    exc
+                )
+            ),
             exc,
         )
 
@@ -153,12 +166,15 @@ def onefs_client(args):
 def logging_cli(parser=None):
     """Define logging CLI arguments and options."""
     if parser is None:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
     parser.add_argument(
-        '-q', '--quiet',
+        "-q",
+        "--quiet",
         default=False,
-        action='store_true',
-        help='Supress console output.',
+        action="store_true",
+        help="Supress console output.",
     )
     parser.add_argument(
         "--log-file",
@@ -168,8 +184,8 @@ def logging_cli(parser=None):
     parser.add_argument(
         "--log-level",
         help="Specify how verbose logging should be.",
-        default='info',
-        choices=('debug', 'info', 'warning', 'error', 'critical'),
+        default="info",
+        choices=("debug", "info", "warning", "error", "critical"),
     )
     return parser
 
@@ -179,11 +195,11 @@ def configure_logging(args):
     logging.getLogger().setLevel(logging.getLevelName(args.log_level.upper()))
     if not args.quiet:
         console_handler = logging.StreamHandler()
-        console_handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
+        console_handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
         logging.getLogger().addHandler(console_handler)
     if args.log_file:
         logfile_handler = logging.FileHandler(args.log_file)
         logfile_handler.setFormatter(
-            logging.Formatter('[%(asctime)s] %(name)s [%(levelname)s] %(message)s'),
+            logging.Formatter("[%(asctime)s] %(name)s [%(levelname)s] %(message)s"),
         )
         logging.getLogger().addHandler(logfile_handler)

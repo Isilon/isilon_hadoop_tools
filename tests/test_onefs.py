@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import socket
+
 try:
     # Python 3
     from unittest.mock import Mock
@@ -36,13 +37,13 @@ def test_init_connection_error(invalid_address, pytestconfig):
 
 @pytest.mark.xfail(
     raises=onefs.MalformedAPIError,
-    reason='https://bugs.west.isilon.com/show_bug.cgi?id=248011',
+    reason="https://bugs.west.isilon.com/show_bug.cgi?id=248011",
 )
 def test_init_bad_creds(pytestconfig):
     """Creating a Client with invalid credentials should raise an appropriate exception."""
     with pytest.raises(onefs.APIError):
         onefs.Client(
-            address=pytestconfig.getoption('--address', skip=True),
+            address=pytestconfig.getoption("--address", skip=True),
             username=str(uuid.uuid4()),
             password=str(uuid.uuid4()),
             verify_ssl=False,  # OneFS uses a self-signed certificate by default.
@@ -51,7 +52,7 @@ def test_init_bad_creds(pytestconfig):
 
 def test_init(request):
     """Creating a Client should not raise an Exception."""
-    assert isinstance(request.getfixturevalue('onefs_client'), onefs.Client)
+    assert isinstance(request.getfixturevalue("onefs_client"), onefs.Client)
 
 
 def test_api_error_errors(api_error_errors_expectation):
@@ -67,22 +68,22 @@ def test_api_error_str(api_error):
 
 
 @pytest.mark.parametrize(
-    'revision, expected_sdk',
+    "revision, expected_sdk",
     [
         (0, isi_sdk_8_2_2),
-        (onefs.ONEFS_RELEASES['7.2.0.0'], isi_sdk_7_2),
-        (onefs.ONEFS_RELEASES['8.0.0.0'], isi_sdk_8_0),
-        (onefs.ONEFS_RELEASES['8.0.0.4'], isi_sdk_8_0),
-        (onefs.ONEFS_RELEASES['8.0.1.0'], isi_sdk_8_0_1),
-        (onefs.ONEFS_RELEASES['8.0.1.1'], isi_sdk_8_0_1),
-        (onefs.ONEFS_RELEASES['8.1.0.0'], isi_sdk_8_1_0),
-        (onefs.ONEFS_RELEASES['8.1.1.0'], isi_sdk_8_1_1),
-        (onefs.ONEFS_RELEASES['8.1.2.0'], isi_sdk_8_1_1),
-        (onefs.ONEFS_RELEASES['8.2.0.0'], isi_sdk_8_2_0),
-        (onefs.ONEFS_RELEASES['8.2.1.0'], isi_sdk_8_2_1),
-        (onefs.ONEFS_RELEASES['8.2.2.0'], isi_sdk_8_2_2),
-        (onefs.ONEFS_RELEASES['8.2.3.0'], isi_sdk_8_2_2),
-        (float('inf'), isi_sdk_8_2_2),
+        (onefs.ONEFS_RELEASES["7.2.0.0"], isi_sdk_7_2),
+        (onefs.ONEFS_RELEASES["8.0.0.0"], isi_sdk_8_0),
+        (onefs.ONEFS_RELEASES["8.0.0.4"], isi_sdk_8_0),
+        (onefs.ONEFS_RELEASES["8.0.1.0"], isi_sdk_8_0_1),
+        (onefs.ONEFS_RELEASES["8.0.1.1"], isi_sdk_8_0_1),
+        (onefs.ONEFS_RELEASES["8.1.0.0"], isi_sdk_8_1_0),
+        (onefs.ONEFS_RELEASES["8.1.1.0"], isi_sdk_8_1_1),
+        (onefs.ONEFS_RELEASES["8.1.2.0"], isi_sdk_8_1_1),
+        (onefs.ONEFS_RELEASES["8.2.0.0"], isi_sdk_8_2_0),
+        (onefs.ONEFS_RELEASES["8.2.1.0"], isi_sdk_8_2_1),
+        (onefs.ONEFS_RELEASES["8.2.2.0"], isi_sdk_8_2_2),
+        (onefs.ONEFS_RELEASES["8.2.3.0"], isi_sdk_8_2_2),
+        (float("inf"), isi_sdk_8_2_2),
     ],
 )
 def test_sdk_for_revision(revision, expected_sdk):
@@ -122,30 +123,30 @@ def test_accesses_onefs_other(exception, onefs_client):
 
 def test_address(onefs_client, pytestconfig):
     """Verify that onefs.Client.address is exactly what was passed in."""
-    assert onefs_client.address == pytestconfig.getoption('--address')
+    assert onefs_client.address == pytestconfig.getoption("--address")
 
 
 def test_username(onefs_client, pytestconfig):
     """Verify that onefs.Client.username is exactly what was passed in."""
-    assert onefs_client.username == pytestconfig.getoption('--username')
+    assert onefs_client.username == pytestconfig.getoption("--username")
 
 
 def test_password(onefs_client, pytestconfig):
     """Verify that onefs.Client.password is exactly what was passed in."""
-    assert onefs_client.password == pytestconfig.getoption('--password')
+    assert onefs_client.password == pytestconfig.getoption("--password")
 
 
 def test_host(onefs_client):
     """Verify that onefs.Client.host is a parsable url."""
     parsed = urlparse(onefs_client.host)
-    assert parsed.scheme == 'https'
+    assert parsed.scheme == "https"
     assert socket.gethostbyname(parsed.hostname)
     assert parsed.port == 8080
 
 
 def test_create_group(request):
     """Ensure that a group can be created successfully."""
-    request.getfixturevalue('created_group')
+    request.getfixturevalue("created_group")
 
 
 def test_delete_group(onefs_client, deletable_group):
@@ -173,20 +174,23 @@ def test_delete_user(onefs_client, deletable_user):
 
 def test_create_user(request):
     """Ensure that a user can be created successfully."""
-    request.getfixturevalue('created_user')
+    request.getfixturevalue("created_user")
 
 
 def test_add_user_to_group(onefs_client, created_user, created_group):
     """Ensure that a user can be added to a group successfully."""
-    assert onefs_client.add_user_to_group(
-        user_name=created_user[0],
-        group_name=created_group[0],
-    ) is None
+    assert (
+        onefs_client.add_user_to_group(
+            user_name=created_user[0],
+            group_name=created_group[0],
+        )
+        is None
+    )
 
 
 def test_create_hdfs_proxy_user(request):
     """Ensure that an HDFS proxy user can be created successfully."""
-    request.getfixturevalue('created_proxy_user')
+    request.getfixturevalue("created_proxy_user")
 
 
 def test_delete_proxy_user(onefs_client, deletable_proxy_user):
@@ -208,7 +212,7 @@ def test_primary_group_of_user(onefs_client, created_user):
 
 def test_create_realm(request):
     """Verify that a Kerberos realm can be created successfully."""
-    request.getfixturevalue('created_realm')
+    request.getfixturevalue("created_realm")
 
 
 def test_delete_realm(onefs_client, deletable_realm):
@@ -218,7 +222,7 @@ def test_delete_realm(onefs_client, deletable_realm):
 
 def test_create_auth_provider(request):
     """Verify that a Kerberos auth provider can be created successfully."""
-    request.getfixturevalue('created_auth_provider')
+    request.getfixturevalue("created_auth_provider")
 
 
 def test_delete_auth_provider(onefs_client, deletable_auth_provider):
@@ -234,13 +238,13 @@ def test_delete_spn(onefs_client, deletable_spn):
 
 def test_create_spn(request):
     """Verify that a Kerberos SPN can be created successfully."""
-    request.getfixturevalue('created_spn')
+    request.getfixturevalue("created_spn")
 
 
 def test_list_spns(onefs_client, created_spn):
     """Verify that a Kerberos SPN can be listed successfully."""
     spn, provider = created_spn
-    assert (spn + '@' + provider) in onefs_client.list_spns(provider=provider)
+    assert (spn + "@" + provider) in onefs_client.list_spns(provider=provider)
 
 
 def test_flush_auth_cache(onefs_client):
@@ -254,10 +258,10 @@ def test_flush_auth_cache_unsupported(riptide_client):
     before Halfpipe raises an UnsupportedOperation exception.
     """
     with pytest.raises(onefs.UnsupportedOperation):
-        riptide_client.flush_auth_cache(zone='notSystem')
+        riptide_client.flush_auth_cache(zone="notSystem")
 
 
-@pytest.mark.usefixtures('requests_delete_raises')
+@pytest.mark.usefixtures("requests_delete_raises")
 def test_flush_auth_cache_error(riptide_client):
     """
     Verify that flushing the auth cache raises an appropriate exception
@@ -272,34 +276,34 @@ def test_hdfs_inotify_settings(onefs_client):
     try:
         hdfs_inotify_settings = onefs_client.hdfs_inotify_settings()
     except onefs.UnsupportedOperation:
-        assert onefs_client.revision() < onefs.ONEFS_RELEASES['8.1.1.0']
+        assert onefs_client.revision() < onefs.ONEFS_RELEASES["8.1.1.0"]
     else:
         assert isinstance(hdfs_inotify_settings, dict)
         assert all(
             setting in hdfs_inotify_settings
-            for setting in ['enabled', 'maximum_delay', 'retention']
+            for setting in ["enabled", "maximum_delay", "retention"]
         )
 
 
 @pytest.mark.parametrize(
-    'setting_and_type',
+    "setting_and_type",
     {
-        'alternate_system_provider': str,
-        'auth_providers': list,
-        'cache_entry_expiry': int,
-        'create_path': (bool, type(None)),
-        'groupnet': str,
-        'home_directory_umask': int,
-        'id': str,
-        'map_untrusted': str,
-        'name': str,
-        'netbios_name': str,
-        'path': str,
-        'skeleton_directory': str,
-        'system': bool,
-        'system_provider': str,
-        'user_mapping_rules': list,
-        'zone_id': int,
+        "alternate_system_provider": str,
+        "auth_providers": list,
+        "cache_entry_expiry": int,
+        "create_path": (bool, type(None)),
+        "groupnet": str,
+        "home_directory_umask": int,
+        "id": str,
+        "map_untrusted": str,
+        "name": str,
+        "netbios_name": str,
+        "path": str,
+        "skeleton_directory": str,
+        "system": bool,
+        "system_provider": str,
+        "user_mapping_rules": list,
+        "zone_id": int,
     }.items(),
 )
 def test_zone_settings(onefs_client, setting_and_type):
@@ -316,14 +320,15 @@ def test_zone_settings_bad_zone(onefs_client):
 
 def test_mkdir(request, onefs_client):
     """Ensure that a directory can be created successfully."""
-    path, permissions = request.getfixturevalue('created_directory')
+    path, permissions = request.getfixturevalue("created_directory")
 
     def _check_postconditions():
         assert onefs_client.permissions(path) == permissions
+
     request.addfinalizer(_check_postconditions)
 
 
-@pytest.mark.parametrize('recursive', [False, True])
+@pytest.mark.parametrize("recursive", [False, True])
 def test_rmdir(onefs_client, deletable_directory, recursive, request):
     """Verify that a directory can be deleted successfully."""
     path, _ = deletable_directory
@@ -332,6 +337,7 @@ def test_rmdir(onefs_client, deletable_directory, recursive, request):
     def _check_postconditions():
         with pytest.raises(onefs.APIError):
             onefs_client.permissions(path)
+
     request.addfinalizer(_check_postconditions)
 
 
@@ -344,40 +350,45 @@ def test_permissions(onefs_client, created_directory):
 def test_chmod(onefs_client, created_directory, max_mode, request):
     """Check that chmod modifies the mode correctly."""
     path, permissions = created_directory
-    new_mode = (permissions['mode'] + 1) % (max_mode + 1)
+    new_mode = (permissions["mode"] + 1) % (max_mode + 1)
     assert onefs_client.chmod(path, new_mode) is None
 
     def _check_postconditions():
-        assert onefs_client.permissions(path)['mode'] == new_mode
+        assert onefs_client.permissions(path)["mode"] == new_mode
+
     request.addfinalizer(_check_postconditions)
 
 
-@pytest.mark.parametrize('new_owner', [True, False])
-@pytest.mark.parametrize('new_group', [True, False])
+@pytest.mark.parametrize("new_owner", [True, False])
+@pytest.mark.parametrize("new_group", [True, False])
 def test_chown(
-        onefs_client,
-        created_directory,
-        created_user,
-        created_group,
-        new_owner,
-        new_group,
-        request,
+    onefs_client,
+    created_directory,
+    created_user,
+    created_group,
+    new_owner,
+    new_group,
+    request,
 ):
     """Check that chown modifies ownership correctly."""
     path, permissions = created_directory
     user_name = created_user[0]
     group_name = created_group[0]
-    assert onefs_client.chown(
-        path,
-        owner=user_name if new_owner else None,
-        group=group_name if new_group else None,
-    ) is None
+    assert (
+        onefs_client.chown(
+            path,
+            owner=user_name if new_owner else None,
+            group=group_name if new_group else None,
+        )
+        is None
+    )
 
     def _check_postconditions():
-        owner = user_name if new_owner else permissions['owner']
-        assert onefs_client.permissions(path)['owner'] == owner
-        group = group_name if new_group else permissions['group']
-        assert onefs_client.permissions(path)['group'] == group
+        owner = user_name if new_owner else permissions["owner"]
+        assert onefs_client.permissions(path)["owner"] == owner
+        group = group_name if new_group else permissions["group"]
+        assert onefs_client.permissions(path)["group"] == group
+
     request.addfinalizer(_check_postconditions)
 
 
@@ -386,7 +397,7 @@ def test_feature_supported(onefs_client, supported_feature):
     try:
         assert onefs_client.feature_is_supported(supported_feature)
     except onefs.UnsupportedOperation:
-        assert onefs_client.revision() < onefs.ONEFS_RELEASES['8.2.0.0']
+        assert onefs_client.revision() < onefs.ONEFS_RELEASES["8.2.0.0"]
 
 
 def test_feature_unsupported(onefs_client, unsupported_feature):
@@ -394,11 +405,11 @@ def test_feature_unsupported(onefs_client, unsupported_feature):
     try:
         assert not onefs_client.feature_is_supported(unsupported_feature)
     except onefs.UnsupportedOperation:
-        assert onefs_client.revision() < onefs.ONEFS_RELEASES['8.2.0.0']
+        assert onefs_client.revision() < onefs.ONEFS_RELEASES["8.2.0.0"]
 
 
 @pytest.mark.parametrize(
-    'error, classinfo',
+    "error, classinfo",
     [
         (onefs.APIError, onefs.OneFSError),
         (onefs.ExpiredLicenseError, onefs.MissingLicenseError),

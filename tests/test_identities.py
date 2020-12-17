@@ -3,9 +3,9 @@ import pytest
 import isilon_hadoop_tools.identities
 
 
-@pytest.mark.parametrize('zone', ['System', 'notSystem'])
+@pytest.mark.parametrize("zone", ["System", "notSystem"])
 @pytest.mark.parametrize(
-    'identities',
+    "identities",
     [
         isilon_hadoop_tools.identities.cdh_identities,
         isilon_hadoop_tools.identities.cdp_identities,
