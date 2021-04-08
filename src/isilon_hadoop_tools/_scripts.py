@@ -33,7 +33,7 @@ def base_cli(parser=None):
     parser.add_argument(
         '--dist',
         help='the Hadoop distribution to be deployed',
-        choices=('cdh', 'hdp'),
+        choices=('cdh', 'cdp', 'hdp'),
         required=True,
     )
     parser.add_argument(
@@ -89,6 +89,7 @@ def isilon_create_users(argv=None):
 
     identities = {
         'cdh': isilon_hadoop_tools.identities.cdh_identities,
+        'cdp': isilon_hadoop_tools.identities.cdp_identities,
         'hdp': isilon_hadoop_tools.identities.hdp_identities,
     }[args.dist](args.zone)
 
@@ -146,6 +147,7 @@ def isilon_create_directories(argv=None):
 
     directories = {
         'cdh': isilon_hadoop_tools.directories.cdh_directories,
+        'cdp': isilon_hadoop_tools.directories.cdh_directories,
         'hdp': isilon_hadoop_tools.directories.hdp_directories,
     }[args.dist](identity_suffix=suffix)
 

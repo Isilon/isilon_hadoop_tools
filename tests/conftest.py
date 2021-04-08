@@ -587,7 +587,7 @@ def requests_delete_raises():
         yield
 
 
-@pytest.fixture(params=['cdh', 'hdp'])
+@pytest.fixture(params=['cdh', 'cdp', 'hdp'])
 def users_groups_for_directories(request, onefs_client):
     """
     Get users and groups from the identities module that
@@ -603,6 +603,7 @@ def users_groups_for_directories(request, onefs_client):
     identities.iterate_identities(
         {
             'cdh': identities.cdh_identities,
+            'cdp': identities.cdh_identities,
             'hdp': identities.hdp_identities,
         }[request.param](onefs_client.zone),
         create_group=lambda group_name: groups.add(group_name),
@@ -614,6 +615,7 @@ def users_groups_for_directories(request, onefs_client):
         (users, groups),
         {
             'cdh': directories.cdh_directories,
+            'cdp': directories.cdh_directories,
             'hdp': directories.hdp_directories,
         }[request.param]()
     )

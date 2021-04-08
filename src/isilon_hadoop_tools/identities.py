@@ -12,6 +12,7 @@ import isilon_hadoop_tools.onefs
 __all__ = [
     # Functions
     'cdh_identities',
+    'cdp_identities',
     'hdp_identities',
     'iterate_identities',
     'log_identities',
@@ -381,6 +382,79 @@ def cdh_identities(zone):
             'impala': {smoke_user, ('hadoop', 'group')},
             'mapred': {smoke_user, ('hadoop', 'group')},
             'oozie': {smoke_user, ('hadoop', 'group')},
+        },
+    }
+    if zone.lower() != 'system':
+        identities['users']['admin'] = ('admin', set())
+    return identities
+
+
+def cdp_identities(zone):
+    """Identities needed for Cloudera Data Platform"""
+    smoke_user = ('cloudera-scm', 'user')
+    identities = {
+        'groups': set(),  # Groups with no users in them.
+        'users': {
+            'accumulo': ('accumulo', set()),
+            'anonymous': ('anonymous', set()),
+            'apache': ('apache', set()),
+            'atlas': ('atlas', {'hadoop', 'supergroup'}),
+            'cloudera-scm': ('cloudera-scm', set()),
+            'cmjobuser': ('cmjobuser', set()),
+            'cruisecontrol': ('cruisecontrol', set()),
+            'druid': ('druid', {'hadoop', 'supergroup'}),
+            'flume': ('flume', set()),
+            'hbase': ('hbase', {'hadoop', 'supergroup'}),
+            'hdfs': ('hdfs', {'hadoop', 'supergroup'}),
+            'hive': ('hive', set()),
+            'HTTP': ('HTTP', {'hadoop', 'supergroup'}),
+            'httpfs': ('httpfs', set()),
+            'hue': ('hue', set()),
+            'impala': ('impala', {'hive'}),
+            'kafka': ('kafka', set()),
+            'keytrustee': ('keytrustee', set()),
+            'kms': ('kms', set()),
+            'knox': ('knox', set()),
+            'knoxui': ('knoxui', set()),
+            'kudu': ('kudu', set()),
+            'llama': ('llama', set()),
+            'livy': ('livy', set()),
+            'mapred': ('mapred', {'hadoop', 'supergroup'}),
+            'oozie': ('oozie', set()),
+            'phoenix': ('phoenix', set()),
+            'ranger': ('ranger', {'hadoop', 'supergroup'}),
+            'rangeradmin': ('rangeradmin', set()),
+            'rangerlookup': ('rangerlookup', set()),
+            'rangerraz': ('rangerraz', set()),
+            'rangerrms': ('rangerrms', set()),
+            'rangertagsync': ('rangertagsync', set()),
+            'rangerusersync': ('rangerusersync', set()),
+            'schemaregistry': ('schemaregistry', set()),
+            'sentry': ('sentry', set()),
+            'solr': ('solr', set()),
+            'spark': ('spark', set()),
+            'sqoop': ('sqoop', {'sqoop2'}),
+            'sqoop2': ('sqoop2', {'sqoop'}),
+            'streamsmsgmgr': ('streamsmsgmgr', set()),
+            'tez': ('tez', set()),
+            'superset': ('superset', set()),
+            'yarn': ('yarn', {'hadoop', 'supergroup'}),
+            'zeppelin': ('zeppelin', set()),
+            'zookeeper': ('zookeeper', set()),
+        },
+        'proxy_users': {
+            'flume': {smoke_user, ('hadoop', 'group')},
+            'hive': {smoke_user, ('hadoop', 'group')},
+            'hue': {smoke_user, ('hadoop', 'group')},
+            'impala': {smoke_user, ('hadoop', 'group')},
+            'mapred': {smoke_user, ('hadoop', 'group')},
+            'oozie': {smoke_user, ('hadoop', 'group')},
+            'phoenix': {smoke_user, ('hadoop', 'group')},
+            'yarn': {smoke_user, ('hadoop', 'group')},
+            'knox': {smoke_user, ('hadoop', 'group')},
+            'hdfs': {smoke_user, ('hadoop', 'group')},
+            'livy': {smoke_user, ('hadoop', 'group')},
+            'HTTP': {smoke_user},
         },
     }
     if zone.lower() != 'system':

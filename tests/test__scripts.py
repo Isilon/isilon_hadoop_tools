@@ -21,7 +21,7 @@ def empty_hdfs_root(onefs_client):
 
 @pytest.mark.usefixtures('empty_hdfs_root')
 @pytest.mark.parametrize('script', ['isilon_create_users', 'isilon_create_directories'])
-@pytest.mark.parametrize('dist', ['cdh', 'hdp'])
+@pytest.mark.parametrize('dist', ['cdh', 'cdp', 'hdp'])
 def test_dry_run(script, onefs_client, dist):
     subprocess.check_call([
         script,

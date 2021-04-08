@@ -16,6 +16,7 @@ __all__ = [
 
     # Functions
     'cdh_directories',
+    'cdp_directories',
     'hdp_directories',
 
     # Objects
@@ -125,6 +126,51 @@ def cdh_directories(identity_suffix=None):
         HDFSDirectory('/user/spark/applicationHistory', 'spark', 'spark', 0o1777),
         HDFSDirectory('/user/sqoop2', 'sqoop2', 'sqoop', 0o775),
         HDFSDirectory('/user/yarn', 'yarn', 'yarn', 0o755),
+    ]
+    if identity_suffix:
+        for directory in directories:
+            directory.apply_identity_suffix(identity_suffix)
+    return directories
+
+
+def cdp_directories(identity_suffix=None):
+    """Directories needed for Cloudera Data Platform"""
+    directories = [
+        HDFSDirectory('/', 'hdfs', 'hadoop', 0o755),
+        HDFSDirectory('/hbase', 'hbase', 'hbase', 0o755),
+        HDFSDirectory('/solr', 'solr', 'solr', 0o775),
+        HDFSDirectory('/tmp', 'hdfs', 'supergroup', 0o1777),
+        HDFSDirectory('/tmp/hive', 'hive', 'supergroup', 0o777),
+        HDFSDirectory('/tmp/logs', 'yarn', 'hadoop', 0o1777),
+        HDFSDirectory('/user', 'hdfs', 'supergroup', 0o755),
+        HDFSDirectory('/user/flume', 'flume', 'flume', 0o775),
+        HDFSDirectory('/user/hdfs', 'hdfs', 'hdfs', 0o755),
+        HDFSDirectory('/user/history', 'mapred', 'hadoop', 0o777),
+        HDFSDirectory('/user/history/done_intermediate', 'mapred', 'hadoop', 0o1777),
+        HDFSDirectory('/user/hive', 'hive', 'hive', 0o775),
+        HDFSDirectory('/user/hive/warehouse', 'hive', 'hive', 0o1777),
+        HDFSDirectory('/user/hue', 'hue', 'hue', 0o755),
+        HDFSDirectory('/user/hue/.cloudera_manager_hive_metastore_canary', 'hue', 'hue', 0o777),
+        HDFSDirectory('/user/impala', 'impala', 'impala', 0o775),
+        HDFSDirectory('/user/livy', 'livy', 'livy', 0o775),
+        HDFSDirectory('/user/oozie', 'oozie', 'oozie', 0o775),
+        HDFSDirectory('/user/spark', 'spark', 'spark', 0o751),
+        HDFSDirectory('/user/spark/applicationHistory', 'spark', 'spark', 0o1777),
+        HDFSDirectory('/user/spark/driverLogs', 'spark', 'spark', 0o1777),
+        HDFSDirectory('/user/sqoop', 'sqoop', 'sqoop', 0o775),
+        HDFSDirectory('/user/sqoop2', 'sqoop2', 'sqoop', 0o775),
+        HDFSDirectory('/user/tez', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/user/yarn', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/user/yarn/mapreduce', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/user/yarn/mapreduce/mr-framework', 'yarn', 'hadoop', 0o775),
+        HDFSDirectory('/user/yarn/services', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/user/yarn/services/service-framework', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/user/zeppelin', 'zeppelin', 'zeppelin', 0o775),
+        HDFSDirectory('/warehouse', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/warehouse/tablespace/external', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/warehouse/tablespace/managed', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/warehouse/tablespace/external/hive', 'hive', 'hive', 0o1775),
+        HDFSDirectory('/warehouse/tablespace/managed/hive', 'hive', 'hive', 0o1775),
     ]
     if identity_suffix:
         for directory in directories:

@@ -8,6 +8,7 @@ import isilon_hadoop_tools.identities
     'identities',
     [
         isilon_hadoop_tools.identities.cdh_identities,
+        isilon_hadoop_tools.identities.cdp_identities,
         isilon_hadoop_tools.identities.hdp_identities,
     ],
 )
