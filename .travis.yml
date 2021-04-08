@@ -9,7 +9,7 @@ before_install: pip install --upgrade pip setuptools wheel
 install: pip install --upgrade tox-travis
 script:
 - tox -- -r a
-- if [ "$TRAVIS_PYTHON_VERSION" = '3.5' ]; then tox -e static; fi
+- if [ "$TRAVIS_PYTHON_VERSION" = '3.8' ]; then tox -e static; fi
 deploy:
   provider: pypi
   user: __token__
@@ -20,5 +20,5 @@ deploy:
     repo: Isilon/isilon_hadoop_tools
     branch: master
     tags: true
-    python: '3.5'
+    python: '3.8'
   skip_existing: true
