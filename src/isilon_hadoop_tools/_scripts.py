@@ -147,7 +147,7 @@ def isilon_create_directories(argv=None):
 
     directories = {
         'cdh': isilon_hadoop_tools.directories.cdh_directories,
-        'cdp': isilon_hadoop_tools.directories.cdh_directories,
+        'cdp': isilon_hadoop_tools.directories.cdp_directories,
         'hdp': isilon_hadoop_tools.directories.hdp_directories,
     }[args.dist](identity_suffix=suffix)
 
