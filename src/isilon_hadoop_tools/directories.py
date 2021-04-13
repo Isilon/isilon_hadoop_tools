@@ -138,6 +138,8 @@ def cdp_directories(identity_suffix=None):
     directories = [
         HDFSDirectory('/', 'hdfs', 'hadoop', 0o755),
         HDFSDirectory('/hbase', 'hbase', 'hbase', 0o755),
+        HDFSDirectory('/ranger', 'hdfs', 'supergroup', 0o755),
+        HDFSDirectory('/ranger/audit', 'hdfs', 'supergroup', 0o755),
         HDFSDirectory('/solr', 'solr', 'solr', 0o775),
         HDFSDirectory('/tmp', 'hdfs', 'supergroup', 0o1777),
         HDFSDirectory('/tmp/hive', 'hive', 'supergroup', 0o777),
