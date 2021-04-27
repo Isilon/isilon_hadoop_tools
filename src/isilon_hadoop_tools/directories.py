@@ -169,6 +169,7 @@ def cdp_directories(identity_suffix=None):
         HDFSDirectory('/user/yarn/services/service-framework', 'hdfs', 'supergroup', 0o775),
         HDFSDirectory('/user/zeppelin', 'zeppelin', 'zeppelin', 0o775),
         HDFSDirectory('/warehouse', 'hdfs', 'supergroup', 0o775),
+        HDFSDirectory('/warehouse/tablespace', 'hdfs', 'supergroup', 0o775),
         HDFSDirectory('/warehouse/tablespace/external', 'hdfs', 'supergroup', 0o775),
         HDFSDirectory('/warehouse/tablespace/managed', 'hdfs', 'supergroup', 0o775),
         HDFSDirectory('/warehouse/tablespace/external/hive', 'hive', 'hive', 0o1775),
