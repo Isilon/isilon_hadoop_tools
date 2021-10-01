@@ -61,25 +61,20 @@ class Creator:
             setup(zone_root, hdfs_root, zone_hdfs)
         for directory in directories:
             zone_path = posixpath.join(zone_hdfs, directory.path.lstrip(sep))
-            LOGGER.info("mkdir '%s%s'", zone_root, zone_path)
+            path = posixpath.join(zone_root, zone_path)
+            LOGGER.info("mkdir '%s'", path)
             try:
                 (mkdir or self.onefs.mkdir)(
                     zone_path, directory.mode, zone=self.onefs_zone
                 )
             except isilon_hadoop_tools.onefs.APIError as exc:
                 if exc.dir_path_already_exists_error():
-                    LOGGER.warning("%s%s already exists. ", zone_root, zone_path)
+                    LOGGER.warning("%s already exists. ", path)
                 else:
                     raise
-            LOGGER.info("chmod '%o' '%s%s'", directory.mode, zone_root, zone_path)
+            LOGGER.info("chmod '%o' '%s'", directory.mode, path)
             (chmod or self.onefs.chmod)(zone_path, directory.mode, zone=self.onefs_zone)
-            LOGGER.info(
-                "chown '%s:%s' '%s%s'",
-                directory.owner,
-                directory.group,
-                zone_root,
-                zone_path,
-            )
+            LOGGER.info("chown '%s:%s' '%s'", directory.owner, directory.group, path)
             (chown or self.onefs.chown)(
                 zone_path,
                 owner=directory.owner,
