@@ -43,9 +43,9 @@ venv/bin/isilon_create_users --help
 
 ### Continuous Integration
 
-[Travis CI](https://travis-ci.com/) ensures the build never breaks and the tests always pass.
+[Github Actions](https://github.com/features/actions) ensures the build never breaks and the tests always pass.
 
-[![Build Status](https://travis-ci.com/Isilon/isilon_hadoop_tools.svg?branch=master)](https://travis-ci.com/Isilon/isilon_hadoop_tools)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Isilon/isilon_hadoop_tools/Validation)](https://github.com/Isilon/isilon_hadoop_tools/actions/workflows/validation.yml)
 
 It also deploys releases to the package repository automatically (see below).
 
