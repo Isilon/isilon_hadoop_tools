@@ -412,6 +412,7 @@ def cdp_identities(zone):
             'hue': ('hue', set()),
             'impala': ('impala', {'hive'}),
             'kafka': ('kafka', set()),
+            'keyadmin': ('keyadmin', set()),
             'keytrustee': ('keytrustee', set()),
             'kms': ('kms', set()),
             'knox': ('knox', set()),
