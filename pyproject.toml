@@ -1,3 +1,11 @@
 [build-system]
 requires = ["setuptools ~= 41.0.0"]
 build-backend = "setuptools.build_meta"
+
+# https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pylint
+[tool.pylint.design]
+max-args = "7"
+[tool.pylint.format]
+max-line-length = "100"
+[tool.pylint.messages_control]
+disable = "bad-continuation, bad-whitespace, useless-object-inheritance"
