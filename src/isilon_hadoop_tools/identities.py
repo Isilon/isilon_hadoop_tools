@@ -66,12 +66,14 @@ class Creator(object):
             start_uid=default_start_uid,
             start_gid=default_start_gid,
             script_path=None,
+            user_password=None,
     ):
         self.onefs = onefs
         self.onefs_zone = onefs_zone
         self._next_uid = start_uid
         self._next_gid = start_gid
         self.script_path = script_path
+        self.user_password = user_password
 
     @property
     def next_gid(self):
@@ -240,6 +242,7 @@ class Creator(object):
                     primary_group_name=primary_group_name,
                     zone=self.onefs_zone,
                     enabled=True,
+                    password=self.user_password,
                 )
                 break
             except isilon_hadoop_tools.onefs.APIError as exc:

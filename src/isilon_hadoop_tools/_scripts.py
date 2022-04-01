@@ -72,6 +72,12 @@ def isilon_create_users_cli(parser=None):
         type=int,
         default=isilon_hadoop_tools.identities.Creator.default_start_uid,
     )
+    parser.add_argument(
+        '--user-password',
+        help='the password for users created',
+        type=str,
+        default=None,
+    )
     return parser
 
 
@@ -112,6 +118,7 @@ def isilon_create_users(argv=None):
         start_uid=args.start_uid,
         start_gid=args.start_gid,
         script_path=os.path.join(os.getcwd(), name + '.sh'),
+        user_password=args.user_password,
     )
     if args.dry:
         LOGGER.info(DRY_RUN)
