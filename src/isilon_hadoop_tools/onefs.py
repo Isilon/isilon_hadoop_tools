@@ -883,7 +883,7 @@ class BaseClient(object):  # pylint: disable=too-many-public-methods,too-many-in
         self._sdk.AuthApi(self._api_client).create_providers_krb5_item(providers_krb5_item)
 
     @accesses_onefs
-    def create_user(self, name, primary_group_name, uid=None, zone=None, enabled=None):
+    def create_user(self, name, primary_group_name, uid=None, zone=None, enabled=None, password=None):
         """Create a user."""
         group_member_cls = (
             self._sdk.GroupMember
@@ -899,6 +899,7 @@ class BaseClient(object):  # pylint: disable=too-many-public-methods,too-many-in
                     name=primary_group_name,
                 ),
                 uid=uid,
+                password=password,
             ),
             zone=zone or self.default_zone,
         )
