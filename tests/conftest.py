@@ -14,6 +14,7 @@ import json
 import os
 import random
 import tempfile
+
 try:
     from unittest.mock import Mock, patch  # Python 3
 except ImportError:
@@ -33,38 +34,38 @@ urllib3.disable_warnings()  # Without this, the SDK will emit InsecureRequestWar
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--address',
-        help='OneFS Address',
+        "--address",
+        help="OneFS Address",
     )
     parser.addoption(
-        '--password',
-        help='OneFS Admin Password',
+        "--password",
+        help="OneFS Admin Password",
     )
     parser.addoption(
-        '--username',
-        default='root',
-        help='OneFS Admin Username',
+        "--username",
+        default="root",
+        help="OneFS Admin Username",
     )
     parser.addoption(
-        '--realm',
-        help='Kerberos Realm',
+        "--realm",
+        help="Kerberos Realm",
     )
     parser.addoption(
-        '--kadmin-address',
-        help='Kerberos Administration Server Address',
+        "--kadmin-address",
+        help="Kerberos Administration Server Address",
     )
     parser.addoption(
-        '--kdc-addresses',
-        help='Kerberos Key Distribution Center Addresses',
-        nargs='+',
+        "--kdc-addresses",
+        help="Kerberos Key Distribution Center Addresses",
+        nargs="+",
     )
     parser.addoption(
-        '--kadmin-username',
-        help='Kerberos Administration Server Admin Username',
+        "--kadmin-username",
+        help="Kerberos Administration Server Admin Username",
     )
     parser.addoption(
-        '--kadmin-password',
-        help='Kerberos Administration Server Admin Password',
+        "--kadmin-password",
+        help="Kerberos Administration Server Admin Password",
     )
 
 
@@ -76,10 +77,10 @@ def max_retry_exception_mock():
 
 @pytest.fixture(
     params=[
-        'unresolvable.invalid',  # unresolvable
-        'localhost',  # resolvable, not OneFS
-        '127.0.0.1',  # IPv4, not OneFS
-        '::1',  # IPv6, not OneFS -- If IPv6 is not enabled, this is the same as "unresolvable".
+        "unresolvable.invalid",  # unresolvable
+        "localhost",  # resolvable, not OneFS
+        "127.0.0.1",  # IPv4, not OneFS
+        "::1",  # IPv6, not OneFS -- If IPv6 is not enabled, this is the same as "unresolvable".
     ],
 )
 def invalid_address(request, max_retry_exception_mock):
@@ -87,7 +88,7 @@ def invalid_address(request, max_retry_exception_mock):
     try:
         # This is how the SDK checks whether localhost is OneFS:
         # https://github.com/Isilon/isilon_sdk_python/blob/19958108ec550865ebeb1f2a4d250322cf4681c2/isi_sdk/rest.py#L33
-        __import__('isi.rest')
+        __import__("isi.rest")
     except ImportError:
         # Different hostnames/addresses hit errors in different code paths.
         # The first error that can be hit is a socket.gaierror if a hostname is unresolvable.
@@ -95,37 +96,45 @@ def invalid_address(request, max_retry_exception_mock):
         # Instead, those connections will succeed but will not respond correctly to API requests.
         # The first API request that's made is to get the cluster version (using isi_sdk_8_0).
         # To avoid having to wait for such a connection to time out, here we patch that request.
-        with patch('isi_sdk_8_0.ClusterApi.get_cluster_version', max_retry_exception_mock):
+        with patch(
+            "isi_sdk_8_0.ClusterApi.get_cluster_version", max_retry_exception_mock
+        ):
             yield request.param  # yield to keep the patch until the teardown of the test.
     else:
-        pytest.skip('Localhost is OneFS.')
+        pytest.skip("Localhost is OneFS.")
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def onefs_client(pytestconfig):
     """Get an instance of onefs.Client."""
     return onefs.Client(
-        address=pytestconfig.getoption('--address', skip=True),
-        username=pytestconfig.getoption('--username', skip=True),
-        password=pytestconfig.getoption('--password', skip=True),
+        address=pytestconfig.getoption("--address", skip=True),
+        username=pytestconfig.getoption("--username", skip=True),
+        password=pytestconfig.getoption("--password", skip=True),
         verify_ssl=False,  # OneFS uses a self-signed certificate by default.
     )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def riptide_client(onefs_client):
     """Get an instance of onefs.Client that points to Riptide."""
-    if onefs.ONEFS_RELEASES['8.0.0.0'] <= onefs_client.revision() < onefs.ONEFS_RELEASES['8.0.1.0']:
+    if (
+        onefs.ONEFS_RELEASES["8.0.0.0"]
+        <= onefs_client.revision()
+        < onefs.ONEFS_RELEASES["8.0.1.0"]
+    ):
         return onefs_client
-    pytest.skip('The OneFS cluster is not running Riptide.')
+    pytest.skip("The OneFS cluster is not running Riptide.")
 
 
 def new_name(request):
     """Get a name that may be used to create a new user or group."""
-    return '-'.join([
-        request.function.__name__,
-        str(uuid.uuid4()),
-    ])
+    return "-".join(
+        [
+            request.function.__name__,
+            str(uuid.uuid4()),
+        ]
+    )
 
 
 def _new_group_name(request):
@@ -167,7 +176,7 @@ def deletable_group(request, onefs_client):
 
 def _created_group(request, onefs_client):
     name, gid = _deletable_group(request, onefs_client)
-    request.addfinalizer(lambda: onefs_client.delete_group(name='GID:' + str(gid)))
+    request.addfinalizer(lambda: onefs_client.delete_group(name="GID:" + str(gid)))
     return name, gid
 
 
@@ -213,7 +222,7 @@ def deletable_user(request, onefs_client):
 
 def _created_user(request, onefs_client):
     name, primary_group_name, uid = _deletable_user(request, onefs_client)
-    request.addfinalizer(lambda: onefs_client.delete_user(name='UID:' + str(uid)))
+    request.addfinalizer(lambda: onefs_client.delete_user(name="UID:" + str(uid)))
     return name, primary_group_name, uid
 
 
@@ -249,11 +258,11 @@ def created_proxy_user(request, onefs_client):
 
 
 def _deletable_realm(pytestconfig, onefs_client):
-    realm = pytestconfig.getoption('--realm', skip=True)
+    realm = pytestconfig.getoption("--realm", skip=True)
     onefs_client.create_realm(
         name=realm,
-        admin_server=pytestconfig.getoption('--kadmin-address', skip=True),
-        kdcs=pytestconfig.getoption('--kdc-addresses', skip=True),
+        admin_server=pytestconfig.getoption("--kadmin-address", skip=True),
+        kdcs=pytestconfig.getoption("--kdc-addresses", skip=True),
     )
     return realm
 
@@ -280,8 +289,8 @@ def _deletable_auth_provider(request, onefs_client):
     realm = _created_realm(request, onefs_client)
     onefs_client.create_auth_provider(
         realm=realm,
-        user=request.config.getoption('--kadmin-username', skip=True),
-        password=request.config.getoption('--kadmin-password', skip=True),
+        user=request.config.getoption("--kadmin-username", skip=True),
+        password=request.config.getoption("--kadmin-password", skip=True),
     )
     return realm
 
@@ -306,7 +315,7 @@ def created_auth_provider(request, onefs_client):
 
 def _new_spn(request, onefs_client):
     return (
-        _new_user_name(request) + '/' + onefs_client.address,
+        _new_user_name(request) + "/" + onefs_client.address,
         _created_auth_provider(request, onefs_client),
     )
 
@@ -318,12 +327,12 @@ def new_spn(request, onefs_client):
 
 
 def _remove_principal_from_kdc(
-        principal,
-        realm,
-        kdc,
-        admin_server,
-        admin_principal,
-        admin_password,
+    principal,
+    realm,
+    kdc,
+    admin_server,
+    admin_principal,
+    admin_password,
 ):
     """Delete a Kerberos principal."""
     # Note: kadmin.init_with_password requires a Kerberos config file.
@@ -331,34 +340,38 @@ def _remove_principal_from_kdc(
     # Create a temporary Kerberos config file.
     krb5_config = configparser.ConfigParser()
     krb5_config.optionxform = str
-    krb5_config.add_section('libdefaults')
-    krb5_config.set('libdefaults', 'default_realm', realm)
-    krb5_config.add_section('realms')
+    krb5_config.add_section("libdefaults")
+    krb5_config.set("libdefaults", "default_realm", realm)
+    krb5_config.add_section("realms")
     krb5_config.set(
-        'realms',
+        "realms",
         realm,
-        '\n'.join([
-            '{',
-            '    kdc = ' + kdc,
-            '    admin_server = ' + admin_server,
-            '}',
-        ]),
+        "\n".join(
+            [
+                "{",
+                "    kdc = " + kdc,
+                "    admin_server = " + admin_server,
+                "}",
+            ]
+        ),
     )
-    with tempfile.NamedTemporaryFile(mode='w', delete=False) as krb5_conf:
+    with tempfile.NamedTemporaryFile(mode="w", delete=False) as krb5_conf:
         krb5_config.write(krb5_conf)
 
     # Activate the config file via an env var.
-    previous_krb5_conf = os.environ.get('KRB5_CONFIG')
-    os.environ['KRB5_CONFIG'] = krb5_conf.name
+    previous_krb5_conf = os.environ.get("KRB5_CONFIG")
+    os.environ["KRB5_CONFIG"] = krb5_conf.name
 
     # Delete the principal.
-    kadmin.init_with_password(admin_principal, admin_password).delete_principal(principal)
+    kadmin.init_with_password(admin_principal, admin_password).delete_principal(
+        principal
+    )
 
     # Reset the env var.
     if previous_krb5_conf is None:
-        del os.environ['KRB5_CONFIG']
+        del os.environ["KRB5_CONFIG"]
     else:
-        os.environ['KRB5_CONFIG'] = previous_krb5_conf
+        os.environ["KRB5_CONFIG"] = previous_krb5_conf
 
     # Delete the config file.
     os.remove(krb5_conf.name)
@@ -366,8 +379,8 @@ def _remove_principal_from_kdc(
 
 def _deletable_spn(request, onefs_client):
     spn, auth_provider = _new_spn(request, onefs_client)
-    kadmin_username = request.config.getoption('--kadmin-username', skip=True)
-    kadmin_password = request.config.getoption('--kadmin-password', skip=True)
+    kadmin_username = request.config.getoption("--kadmin-username", skip=True)
+    kadmin_password = request.config.getoption("--kadmin-password", skip=True)
     onefs_client.create_spn(
         spn=spn,
         realm=auth_provider,
@@ -378,8 +391,8 @@ def _deletable_spn(request, onefs_client):
         lambda: _remove_principal_from_kdc(
             principal=spn,
             realm=auth_provider,
-            kdc=request.config.getoption('--kdc-addresses', skip=True)[0],
-            admin_server=request.config.getoption('--kadmin-address', skip=True),
+            kdc=request.config.getoption("--kdc-addresses", skip=True)[0],
+            admin_server=request.config.getoption("--kadmin-address", skip=True),
             admin_principal=kadmin_username,
             admin_password=kadmin_password,
         ),
@@ -392,24 +405,30 @@ def deletable_spn(request, onefs_client):
     """Get the name of an existing SPN that it is ok to delete."""
     spn, auth_provider = _deletable_spn(request, onefs_client)
     yield spn, auth_provider
-    assert (spn + '@' + auth_provider) not in onefs_client.list_spns(provider=auth_provider)
+    assert (spn + "@" + auth_provider) not in onefs_client.list_spns(
+        provider=auth_provider
+    )
 
 
 @pytest.fixture
 def created_spn(request, onefs_client):
     """Get the name of an existing Kerberos SPN."""
     spn, auth_provider = _deletable_spn(request, onefs_client)
-    request.addfinalizer(lambda: onefs_client.delete_spn(spn=spn, provider=auth_provider))
+    request.addfinalizer(
+        lambda: onefs_client.delete_spn(spn=spn, provider=auth_provider)
+    )
     return spn, auth_provider
 
 
 @pytest.fixture
 def exception():
     """Get an exception."""
-    return random.choice([
-        Exception,
-        IsilonHadoopToolError,
-    ])
+    return random.choice(
+        [
+            Exception,
+            IsilonHadoopToolError,
+        ]
+    )
 
 
 def _api_exception_from_http_resp(onefs_client, body):
@@ -421,19 +440,18 @@ def _api_exception_from_http_resp(onefs_client, body):
 def _api_exception(onefs_client, messages=()):
     return _api_exception_from_http_resp(
         onefs_client,
-        body=json.dumps({
-            'errors': [
-                {'message': message}
-                for message in messages
-            ],
-        }),
+        body=json.dumps(
+            {
+                "errors": [{"message": message} for message in messages],
+            }
+        ),
     )
 
 
 @pytest.fixture
 def empty_api_exception_mock(onefs_client):
     """Get an object that raises an ApiException (from the Isilon SDK) when called."""
-    return Mock(side_effect=_api_exception(onefs_client, messages=['']))
+    return Mock(side_effect=_api_exception(onefs_client, messages=[""]))
 
 
 @pytest.fixture
@@ -444,7 +462,9 @@ def retriable_api_exception_mock(onefs_client):
         Mock(
             side_effect=[
                 # First raise an exception, then return a value.
-                _api_exception(onefs_client, messages=[onefs.APIError.try_again_error_format]),
+                _api_exception(
+                    onefs_client, messages=[onefs.APIError.try_again_error_format]
+                ),
                 return_value,
             ],
         ),
@@ -457,7 +477,9 @@ def retriable_api_exception_mock(onefs_client):
         lambda onefs_client: (
             # body, decodable, valid, iterable, not empty, valid
             # This is known to occur in the wild.
-            _api_exception(onefs_client, messages=[onefs.APIError.try_again_error_format]),
+            _api_exception(
+                onefs_client, messages=[onefs.APIError.try_again_error_format]
+            ),
             does_not_raise(),
         ),
         lambda onefs_client: (
@@ -483,24 +505,26 @@ def retriable_api_exception_mock(onefs_client):
         lambda onefs_client: (
             # body, decodable, invalid (KeyError)
             # This is known to occur in the wild (e.g. bug 248011)
-            _api_exception_from_http_resp(onefs_client, body='{}'),
+            _api_exception_from_http_resp(onefs_client, body="{}"),
             pytest.raises(onefs.MalformedAPIError),
         ),
         lambda onefs_client: (
             # body, decodable, invalid (TypeError)
-            _api_exception_from_http_resp(onefs_client, body='[]'),
+            _api_exception_from_http_resp(onefs_client, body="[]"),
             pytest.raises(onefs.MalformedAPIError),
         ),
         lambda onefs_client: (
             # body, undecodable
             # This is known to occur in the wild (e.g. if Apache errors before PAPI).
-            _api_exception_from_http_resp(onefs_client, body='not JSON'),
+            _api_exception_from_http_resp(onefs_client, body="not JSON"),
             pytest.raises(onefs.UndecodableAPIError),
         ),
         lambda onefs_client: (
             # no body
             # This is known to occur in the wild.
-            onefs_client._sdk.rest.ApiException(status=0, reason='built without http_resp'),
+            onefs_client._sdk.rest.ApiException(
+                status=0, reason="built without http_resp"
+            ),
             pytest.raises(onefs.UndecodableAPIError),
         ),
         lambda onefs_client: (
@@ -535,14 +559,14 @@ def max_mode():
 
 
 def _deletable_directory(request, onefs_client):
-    path = '/' + new_name(request)
+    path = "/" + new_name(request)
     mode = random.randint(0, MAX_MODE)
     mode &= 0o777  # https://bugs.west.isilon.com/show_bug.cgi?id=250615
     onefs_client.mkdir(path=path, mode=mode)
     return path, {
-        'group': onefs_client.primary_group_of_user(onefs_client.username),
-        'mode': mode,
-        'owner': onefs_client.username,
+        "group": onefs_client.primary_group_of_user(onefs_client.username),
+        "mode": mode,
+        "owner": onefs_client.username,
     }
 
 
@@ -573,8 +597,10 @@ def supported_feature():
 @pytest.fixture
 def unsupported_feature():
     """Get a OneFSFeature that is guaranteed to be unsupported."""
+
     class OneFSFakeFeature(Enum):
-        FAKE_FEATURE = (float('inf'), 0)
+        FAKE_FEATURE = (float("inf"), 0)
+
     return OneFSFakeFeature.FAKE_FEATURE
 
 
@@ -583,11 +609,12 @@ def requests_delete_raises():
     class _DummyResponse(object):
         def raise_for_status(self):
             raise requests.exceptions.HTTPError
-    with patch('requests.delete', lambda *args, **kwargs: _DummyResponse()):
+
+    with patch("requests.delete", lambda *args, **kwargs: _DummyResponse()):
         yield
 
 
-@pytest.fixture(params=['cdh', 'cdp', 'hdp'])
+@pytest.fixture(params=["cdh", "cdp", "hdp"])
 def users_groups_for_directories(request, onefs_client):
     """
     Get users and groups from the identities module that
@@ -602,9 +629,9 @@ def users_groups_for_directories(request, onefs_client):
 
     identities.iterate_identities(
         {
-            'cdh': identities.cdh_identities,
-            'cdp': identities.cdh_identities,
-            'hdp': identities.hdp_identities,
+            "cdh": identities.cdh_identities,
+            "cdp": identities.cdh_identities,
+            "hdp": identities.hdp_identities,
         }[request.param](onefs_client.zone),
         create_group=lambda group_name: groups.add(group_name),
         create_user=lambda user_name, _: users.add(user_name),
@@ -614,8 +641,8 @@ def users_groups_for_directories(request, onefs_client):
     return (
         (users, groups),
         {
-            'cdh': directories.cdh_directories,
-            'cdp': directories.cdh_directories,
-            'hdp': directories.hdp_directories,
-        }[request.param]()
+            "cdh": directories.cdh_directories,
+            "cdp": directories.cdh_directories,
+            "hdp": directories.hdp_directories,
+        }[request.param](),
     )

@@ -15,7 +15,7 @@ def test_directory_identities(users_groups_for_directories):
 
 
 @pytest.mark.parametrize(
-    'error, classinfo',
+    "error, classinfo",
     [
         (directories.DirectoriesError, IsilonHadoopToolError),
         (directories.HDFSRootDirectoryError, directories.DirectoriesError),

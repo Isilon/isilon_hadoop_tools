@@ -10,7 +10,7 @@ import isilon_hadoop_tools
 
 
 @pytest.mark.parametrize(
-    'error, classinfo',
+    "error, classinfo",
     [
         (isilon_hadoop_tools.IsilonHadoopToolError, Exception),
     ],
