@@ -416,7 +416,7 @@ def cdp_identities(zone):
             "hive": ("hive", set()),
             "HTTP": ("HTTP", {"hadoop", "supergroup"}),
             "httpfs": ("httpfs", set()),
-            "hue": ("hue", {"hue"}),
+            "hue": ("hue", {"hadoop"}),
             "impala": ("impala", {"hive"}),
             "kafka": ("kafka", set()),
             "keyadmin": ("keyadmin", set()),
