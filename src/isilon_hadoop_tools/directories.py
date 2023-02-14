@@ -171,7 +171,7 @@ def cdp_directories(identity_suffix=None):
         HDFSDirectory("/user/oozie", "oozie", "oozie", 0o775),
         HDFSDirectory("/user/spark", "spark", "spark", 0o751),
         HDFSDirectory("/user/spark/applicationHistory", "spark", "spark", 0o1777),
-        HDFSDirectory("/user/spark/spark3ApplicationHistory", "spark", "spark", 0o1777)
+        HDFSDirectory("/user/spark/spark3ApplicationHistory", "spark", "spark", 0o1777),
         HDFSDirectory("/user/spark/driverLogs", "spark", "spark", 0o1777),
         HDFSDirectory("/user/spark/driver3Logs", "spark", "spark", 0o1777),
         HDFSDirectory("/user/sqoop", "sqoop", "sqoop", 0o775),
