@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 """Packaging for Isilon Hadoop Tools"""
 
 import setuptools
@@ -10,7 +7,6 @@ with open("README.md") as readme_file:
 
 setuptools.setup(
     name="isilon_hadoop_tools",
-    use_scm_version=True,
     description="Tools for Using Hadoop with OneFS",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -22,7 +18,6 @@ setuptools.setup(
     packages=setuptools.find_packages("src"),
     include_package_data=True,
     python_requires=">=3.7",
-    setup_requires=["setuptools_scm ~= 3.3"],
     install_requires=[
         "future >= 0.16.0",
         "isi-sdk-7-2 ~= 0.2.11",
