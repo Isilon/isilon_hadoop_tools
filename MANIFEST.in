@@ -1,4 +1,0 @@
-graft src
-global-exclude *.py[cod] __pycache__
-include README.md
-include pyproject.toml
