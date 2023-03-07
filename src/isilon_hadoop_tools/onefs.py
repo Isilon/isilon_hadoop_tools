@@ -577,7 +577,9 @@ def accesses_onefs(func):
                     # https://github.com/Isilon/isilon_sdk_python/issues/14
                     raise_from(OneFSCertificateError, exc)
                 raise_from(OneFSConnectionError, exc)
-            except self._sdk.rest.ApiException as exc:  # pylint: disable=protected-access
+            except (
+                self._sdk.rest.ApiException
+            ) as exc:  # pylint: disable=protected-access
                 if all(
                     [
                         # https://github.com/PyCQA/pylint/issues/2841
@@ -616,7 +618,6 @@ class BaseClient(
     def __init__(
         self, address, username, password, default_zone="System", verify_ssl=True
     ):
-
         # Set attributes without setters first.
         self.default_zone = default_zone
         # We don't know what version we are pointed at yet, but we have to start somewhere.
