@@ -42,7 +42,7 @@ def base_cli(parser=None):
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s v{0}".format(isilon_hadoop_tools.__version__),
+        version=f"%(prog)s v{isilon_hadoop_tools.__version__}",
     )
     return parser
 
@@ -174,7 +174,7 @@ def isilon_create_directories(argv=None):
     except isilon_hadoop_tools.directories.HDFSRootDirectoryError as exc:
         raise_from(
             isilon_hadoop_tools.cli.CLIError(
-                "The HDFS root directory must not be {0}.".format(exc),
+                f"The HDFS root directory must not be {exc}."
             ),
             exc,
         )

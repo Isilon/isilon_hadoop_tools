@@ -30,7 +30,7 @@ class HDFSRootDirectoryError(DirectoriesError):
     """This exception occurs when the HDFS root directory is not set to a usable path."""
 
 
-class Creator(object):
+class Creator:
 
     """Create directories with appropriate ownership and permissions on OneFS."""
 
@@ -96,7 +96,7 @@ class Creator(object):
         )
 
 
-class HDFSDirectory(object):  # pylint: disable=too-few-public-methods
+class HDFSDirectory:  # pylint: disable=too-few-public-methods
 
     """A Directory on HDFS"""
 

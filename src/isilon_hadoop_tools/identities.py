@@ -18,6 +18,7 @@ __all__ = [
     "Creator",
 ]
 
+ENCODING = "utf-8"
 LOGGER = logging.getLogger(__name__)
 
 
@@ -38,13 +39,12 @@ def _log_create_proxy_user(proxy_user_name, members):
         "Create %s proxy user with the following members: %s.",
         proxy_user_name,
         ", ".join(
-            "{0} ({1})".format(member_name, member_type)
-            for member_name, member_type in members
+            f"{member_name} ({member_type})" for member_name, member_type in members
         ),
     )
 
 
-class Creator(object):
+class Creator:
 
     """
     Create users and groups with contiguous IDs on OneFS
@@ -118,12 +118,8 @@ class Creator(object):
                 group_name,
                 self.script_path,
             )
-            with open(self.script_path, "a") as script_file:
-                script_file.write(
-                    "usermod -a -G {group} {user}\n".format(
-                        group=group_name, user=user_name
-                    ),
-                )
+            with open(self.script_path, "a", encoding=ENCODING) as script_file:
+                script_file.write(f"usermod -a -G {group_name} {user_name}\n")
 
     def create_group(self, group_name):
         """Create a group on OneFS and in the local script."""
@@ -159,10 +155,8 @@ class Creator(object):
                 gid,
                 self.script_path,
             )
-            with open(self.script_path, "a") as script_file:
-                script_file.write(
-                    "groupadd --gid {gid} {name}\n".format(gid=gid, name=group_name)
-                )
+            with open(self.script_path, "a", encoding=ENCODING) as script_file:
+                script_file.write(f"groupadd --gid {gid} {group_name}\n")
         return gid
 
     def create_identities(
@@ -210,7 +204,7 @@ class Creator(object):
                 "Creating the %s proxy user with the following members: %s...",
                 proxy_user_name,
                 ", ".join(
-                    "{0} ({1})".format(member_name, member_type)
+                    f"{member_name} ({member_type})"
                     for member_name, member_type in members
                 ),
             )
@@ -229,7 +223,7 @@ class Creator(object):
 
     def _create_script(self):
         if not os.path.exists(self.script_path):
-            with open(self.script_path, "w") as script_file:
+            with open(self.script_path, "w", encoding=ENCODING) as script_file:
                 script_file.write("#!/usr/bin/env sh\n")
                 script_file.write("set -o errexit\n")
                 script_file.write("set -o xtrace\n")
@@ -275,20 +269,15 @@ class Creator(object):
                 uid,
                 self.script_path,
             )
-            with open(self.script_path, "a") as script_file:
-                script_file.write(
-                    "useradd --uid {uid} --gid {gid} {name}\n".format(
-                        uid=uid,
-                        gid=self.onefs.gid_of_group(
-                            group_name=self.onefs.primary_group_of_user(
-                                user_name=user_name,
-                                zone=self.onefs_zone,
-                            ),
-                            zone=self.onefs_zone,
-                        ),
-                        name=user_name,
-                    ),
-                )
+            gid = self.onefs.gid_of_group(
+                group_name=self.onefs.primary_group_of_user(
+                    user_name=user_name,
+                    zone=self.onefs_zone,
+                ),
+                zone=self.onefs_zone,
+            )
+            with open(self.script_path, "a", encoding=ENCODING) as script_file:
+                script_file.write(f"useradd --uid {uid} --gid {gid} {user_name}\n")
         return uid
 
 

@@ -63,6 +63,7 @@ ONEFS_RELEASES = {
     "8.2.2.0": 0x802025000000007,
     "8.2.3.0": 0x802035000000000,
 }
+REQUEST_TIMEOUT = 60 * 3  # seconds
 
 
 class OneFSFeature(Enum):
@@ -236,7 +237,7 @@ class NonSDKAPIError(OneFSError):
 
 class _BaseAPIError(OneFSError):
     def __init__(self, exc):
-        super(_BaseAPIError, self).__init__(str(exc))
+        super().__init__(str(exc))
         self.exc = exc
 
 
@@ -557,9 +558,7 @@ def sdk_for_revision(revision, strict=False):
     # however, new clusters still support old SDKs,
     # so, unless the caller asks to fail here, we'll fall back to the newest supported SDK.
     if strict:
-        raise UnsupportedVersion(
-            "There is no SDK for OneFS revision {0}!".format(hex(revision))
-        )
+        raise UnsupportedVersion(f"There is no SDK for OneFS revision 0x{revision:x}!")
     import isi_sdk_8_2_2
 
     return isi_sdk_8_2_2  # The latest SDK available.
@@ -578,8 +577,8 @@ def accesses_onefs(func):
                     raise_from(OneFSCertificateError, exc)
                 raise_from(OneFSConnectionError, exc)
             except (
-                self._sdk.rest.ApiException
-            ) as exc:  # pylint: disable=protected-access
+                self._sdk.rest.ApiException  # pylint: disable=protected-access
+            ) as exc:
                 if all(
                     [
                         # https://github.com/PyCQA/pylint/issues/2841
@@ -609,9 +608,7 @@ def _license_is_active(license_):
     return license_.status.lower() in ["activated", "evaluation", "licensed"]
 
 
-class BaseClient(
-    object
-):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
 
     """Interact with OneFS."""
 
@@ -785,8 +782,8 @@ class BaseClient(
             netloc = socket.gethostbyname(address)
         except socket.gaierror as exc:
             raise_from(OneFSConnectionError, exc)
-        if ":" in netloc:
-            netloc = "[{ipv6}]".format(ipv6=netloc)
+        if ":" in netloc:  # IPv6
+            netloc = f"[{netloc}]"
 
         # Keep every part of self.host, except the hostname/address.
         parsed = urlparse(self.host)
@@ -823,7 +820,7 @@ class BaseClient(
             acl=True,
             namespace_acl=self._sdk.NamespaceAcl(
                 authoritative="mode",
-                mode="{:o}".format(mode),
+                mode=f"{mode:o}",
             ),
         )
 
@@ -835,25 +832,17 @@ class BaseClient(
         if owner is not None:
             # Get the UID of the owner to avoid name resolution problems across zones
             # (e.g. using the System zone to configure a different zone).
-            ns_acl_kwargs["owner"] = self._sdk.MemberObject(
-                type="UID",
-                id="UID:{uid}".format(
-                    uid=owner
-                    if isinstance(owner, int)
-                    else self.uid_of_user(owner, zone=zone),
-                ),
+            uid = (
+                owner if isinstance(owner, int) else self.uid_of_user(owner, zone=zone)
             )
+            ns_acl_kwargs["owner"] = self._sdk.MemberObject(type="UID", id=f"UID:{uid}")
         if group is not None:
             # Get the GID of the group to avoid name resolution problems across zones
             # (e.g. using the System zone to configure a different zone).
-            ns_acl_kwargs["group"] = self._sdk.MemberObject(
-                type="GID",
-                id="GID:{gid}".format(
-                    gid=group
-                    if isinstance(group, int)
-                    else self.gid_of_group(group, zone=zone),
-                ),
+            gid = (
+                group if isinstance(group, int) else self.gid_of_group(group, zone=zone)
             )
+            ns_acl_kwargs["group"] = self._sdk.MemberObject(type="GID", id=f"GID:{gid}")
         self._sdk.NamespaceApi(self._api_client).set_acl(
             namespace_path=real_path.lstrip(posixpath.sep),
             acl=True,
@@ -1063,6 +1052,7 @@ class BaseClient(
                 verify=self.verify_ssl,
                 auth=(self.username, self.password),
                 params={"cached": True},
+                timeout=REQUEST_TIMEOUT,
             )
             try:
                 response.raise_for_status()
@@ -1123,10 +1113,10 @@ class BaseClient(
                 )
                 .settings
             )
-        except AttributeError:
+        except AttributeError as exc:
             raise UnsupportedOperation(
                 "OneFS 8.1.1 or later is required for INotify support."
-            )
+            ) from exc
         return {
             "enabled": hdfs_inotify_settings.enabled,
             "maximum_delay": hdfs_inotify_settings.maximum_delay,
@@ -1188,7 +1178,7 @@ class BaseClient(
         self._sdk.NamespaceApi(self._api_client).create_directory(
             directory_path=real_path.lstrip(posixpath.sep),
             x_isi_ifs_target_type="container",
-            x_isi_ifs_access_control="{:o}".format(mode),
+            x_isi_ifs_access_control=f"{mode:o}",
             recursive=recursive,
             overwrite=overwrite,
         )
@@ -1299,7 +1289,7 @@ class BaseClient(
                 getattr(acl_settings, key)
             except AttributeError as exc:
                 raise_from(
-                    OneFSValueError('"{0}" is not a valid ACL setting.'.format(key)),
+                    OneFSValueError(f'"{key}" is not a valid ACL setting.'),
                     exc,
                 )
             setattr(acl_settings, key, value)
@@ -1314,7 +1304,7 @@ class BaseClient(
                 getattr(hdfs_settings, key)
             except AttributeError as exc:
                 raise_from(
-                    OneFSValueError('"{0}" is not a valid HDFS setting.'.format(key)),
+                    OneFSValueError(f'"{key}" is not a valid HDFS setting.'),
                     exc,
                 )
             setattr(hdfs_settings, key, value)
@@ -1332,7 +1322,7 @@ class BaseClient(
                 getattr(zone_settings, key)
             except AttributeError as exc:
                 raise_from(
-                    OneFSValueError('"{0}" is not a valid zone setting.'.format(key)),
+                    OneFSValueError(f'"{key}" is not a valid zone setting.'),
                     exc,
                 )
             setattr(zone_settings, key, value)
@@ -1354,7 +1344,7 @@ class BaseClient(
     def user_groups(self, user_name, zone=None):
         """Get the groups a user is in."""
         auth_users = self._sdk.AuthApi(self._api_client).get_auth_user(
-            auth_user_id="USER:{name}".format(name=user_name),
+            auth_user_id=f"USER:{user_name}",
             query_member_of=True,
             zone=zone or self.default_zone,
         )
@@ -1438,7 +1428,7 @@ class Client(BaseClient):
 
     def __init__(self, *args, **kwargs):
         LOGGER.debug("Connecting to the OneFS cluster...")
-        super(Client, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         LOGGER.debug("OneFS interactions will go to %s.", self.host)
         self.check_zone(self.zone)
         LOGGER.debug("The %s zone exists.", self.zone)
