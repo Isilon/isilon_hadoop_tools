@@ -30,6 +30,7 @@ setuptools.setup(
         "isi-sdk-8-2-2 ~= 0.2.11",
         "requests >= 2.20.0",
         "setuptools >= 41.0.0",
+        "urllib3 >= 1.22.0",
     ],
     entry_points={
         "console_scripts": [
