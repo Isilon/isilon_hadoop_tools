@@ -1,8 +1,5 @@
 """This module defines a CLI common to all command-line tools."""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import argparse
 import getpass
 import logging

@@ -1,8 +1,5 @@
 """Command-line interface for entry points"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import logging
 import os
 import sys

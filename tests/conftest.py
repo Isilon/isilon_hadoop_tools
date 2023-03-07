@@ -1,24 +1,14 @@
 """Define config and fixtures for testing the functionality of isilon_hadoop_tools."""
 
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
-try:
-    import configparser  # Python 3
-except ImportError:
-    import ConfigParser as configparser  # Python 2
+import configparser
 from contextlib2 import ExitStack as does_not_raise
 from enum import Enum
 import json
 import os
 import random
 import tempfile
-
-try:
-    from unittest.mock import Mock, patch  # Python 3
-except ImportError:
-    from mock import Mock, patch  # Python 2
+from unittest.mock import Mock, patch  # Python 3
 import uuid
 
 import kadmin

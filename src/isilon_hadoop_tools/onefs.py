@@ -2,9 +2,6 @@
 
 # pylint: disable=too-many-lines
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 from datetime import date, datetime
 from enum import Enum
 import json
@@ -13,15 +10,11 @@ import posixpath
 import socket
 import struct
 import time
-
-try:
-    from urllib.parse import urlparse, urlunparse  # Python 3
-except ImportError:
-    from urlparse import urlparse, urlunparse  # Python 2
-import urllib3
+from urllib.parse import urlparse, urlunparse  # Python 3
 
 from future.utils import raise_from
 import requests
+import urllib3
 
 from isilon_hadoop_tools import IsilonHadoopToolError
 

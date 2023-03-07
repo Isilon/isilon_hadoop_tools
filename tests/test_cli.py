@@ -1,13 +1,7 @@
 """Verify the functionality of isilon_hadoop_tools.cli."""
 
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
-try:
-    from unittest.mock import Mock  # Python 3
-except ImportError:
-    from mock import Mock  # Python 2
+from unittest.mock import Mock
 
 import pytest
 

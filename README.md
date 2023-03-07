@@ -20,7 +20,7 @@ Isilon Hadoop Tools (IHT) currently requires Python 3.7+ and supports OneFS 8+.
 <summary>Use <code>pipx</code> to install IHT.</summary>
 <br>
 
-> _`pipx` requires Python 3.7 or later. For other versions or **offline installations**, see Option 2._
+> _`pipx` requires Python 3.7 or later._
 
 1. [Install `pipx`:](https://pipxproject.github.io/pipx/installation/)
 

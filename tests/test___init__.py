@@ -1,9 +1,6 @@
 """Verify the functionality of isilon_hadoop_tools.__init__."""
 
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import pytest
 
 import isilon_hadoop_tools

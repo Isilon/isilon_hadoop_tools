@@ -1,8 +1,5 @@
 """Define and create necessary Hadoop users and groups on OneFS."""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import logging
 import os
 
