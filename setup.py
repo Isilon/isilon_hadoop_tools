@@ -19,7 +19,6 @@ setuptools.setup(
     include_package_data=True,
     python_requires=">=3.7",
     install_requires=[
-        "future >= 0.16.0",
         "isi-sdk-7-2 ~= 0.2.11",
         "isi-sdk-8-0 ~= 0.2.11",
         "isi-sdk-8-0-1 ~= 0.2.11",

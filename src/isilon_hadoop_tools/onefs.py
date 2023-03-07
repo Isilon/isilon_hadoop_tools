@@ -12,7 +12,6 @@ import struct
 import time
 from urllib.parse import urlparse, urlunparse  # Python 3
 
-from future.utils import raise_from
 import requests
 import urllib3
 
@@ -303,7 +302,7 @@ class APIError(_BaseAPIError):
             TypeError,  # self.exc.body is not a str.
             ValueError,  # self.exc.body is not JSON.
         ) as exc:
-            raise_from(UndecodableAPIError(self.exc), exc)
+            raise UndecodableAPIError(self.exc) from exc
         try:
             for error in json_body["errors"]:
                 # Raise a KeyError if 'message' is not in error:
@@ -312,7 +311,7 @@ class APIError(_BaseAPIError):
             KeyError,  # 'errors' or 'message' is not in json_body or error, respectively.
             TypeError,  # json_body['errors'] is not iterable.
         ) as exc:
-            raise_from(MalformedAPIError(self.exc), exc)
+            raise MalformedAPIError(self.exc) from exc
         return json_body["errors"]
 
     def filtered_errors(self, filter_func):
@@ -574,8 +573,8 @@ def accesses_onefs(func):
             except urllib3.exceptions.MaxRetryError as exc:
                 if isinstance(exc.reason, urllib3.exceptions.SSLError):
                     # https://github.com/Isilon/isilon_sdk_python/issues/14
-                    raise_from(OneFSCertificateError, exc)
-                raise_from(OneFSConnectionError, exc)
+                    raise OneFSCertificateError from exc
+                raise OneFSConnectionError from exc
             except (
                 self._sdk.rest.ApiException  # pylint: disable=protected-access
             ) as exc:
@@ -587,10 +586,10 @@ def accesses_onefs(func):
                         in (exc.reason or ""),  # pylint: disable=no-member
                     ]
                 ):
-                    raise_from(OneFSCertificateError, exc)
+                    raise OneFSCertificateError from exc
                 wrapped_exc = APIError(exc)
                 if not wrapped_exc.try_again_error():
-                    raise_from(wrapped_exc, exc)
+                    raise wrapped_exc from exc
                 time.sleep(2)
                 LOGGER.info(wrapped_exc.try_again_error_format)
 
@@ -675,7 +674,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
                 self.revision()
             )
         except AttributeError as exc:
-            raise_from(UndeterminableVersion, exc)
+            raise UndeterminableVersion from exc
         self._sdk = sdk_for_revision(self._revision)
 
     @accesses_onefs
@@ -781,7 +780,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
             # So, we will choose 1 node to connect to and use that.
             netloc = socket.gethostbyname(address)
         except socket.gaierror as exc:
-            raise_from(OneFSConnectionError, exc)
+            raise OneFSConnectionError from exc
         if ":" in netloc:  # IPv6
             netloc = f"[{netloc}]"
 
@@ -1017,12 +1016,9 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
         try:
             committed_features = upgrade_cluster.committed_features
         except AttributeError as exc:
-            raise_from(
-                UnsupportedOperation(
-                    "OneFS 8.2.0 or later is required for feature flag support.",
-                ),
-                exc,
-            )
+            raise UnsupportedOperation(
+                "OneFS 8.2.0 or later is required for feature flag support.",
+            ) from exc
 
         entries_for_gen = [
             entry.bits
@@ -1057,7 +1053,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
             try:
                 response.raise_for_status()
             except requests.exceptions.HTTPError as exc:
-                raise_from(NonSDKAPIError("The auth cache could not be flushed."), exc)
+                raise NonSDKAPIError("The auth cache could not be flushed.") from exc
             else:
                 assert bool(
                     response.status_code
@@ -1288,10 +1284,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
             try:
                 getattr(acl_settings, key)
             except AttributeError as exc:
-                raise_from(
-                    OneFSValueError(f'"{key}" is not a valid ACL setting.'),
-                    exc,
-                )
+                raise OneFSValueError(f'"{key}" is not a valid ACL setting.') from exc
             setattr(acl_settings, key, value)
         self._sdk.AuthApi(self._api_client).update_settings_acls(acl_settings)
 
@@ -1303,10 +1296,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
             try:
                 getattr(hdfs_settings, key)
             except AttributeError as exc:
-                raise_from(
-                    OneFSValueError(f'"{key}" is not a valid HDFS setting.'),
-                    exc,
-                )
+                raise OneFSValueError(f'"{key}" is not a valid HDFS setting.') from exc
             setattr(hdfs_settings, key, value)
         self._sdk.ProtocolsApi(self._api_client).update_hdfs_settings(
             hdfs_settings,
@@ -1321,10 +1311,7 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
             try:
                 getattr(zone_settings, key)
             except AttributeError as exc:
-                raise_from(
-                    OneFSValueError(f'"{key}" is not a valid zone setting.'),
-                    exc,
-                )
+                raise OneFSValueError(f'"{key}" is not a valid zone setting.') from exc
             setattr(zone_settings, key, value)
         self._sdk.ZonesApi(self._api_client).update_zone(
             zone_settings, zone or self.default_zone

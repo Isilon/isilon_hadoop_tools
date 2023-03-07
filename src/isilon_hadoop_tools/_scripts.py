@@ -5,7 +5,6 @@ import os
 import sys
 import time
 
-from future.utils import raise_from
 import urllib3
 
 import isilon_hadoop_tools
@@ -172,9 +171,6 @@ def isilon_create_directories(argv=None):
         else:
             creator.create_directories(directories)
     except isilon_hadoop_tools.directories.HDFSRootDirectoryError as exc:
-        raise_from(
-            isilon_hadoop_tools.cli.CLIError(
-                f"The HDFS root directory must not be {exc}."
-            ),
-            exc,
-        )
+        raise isilon_hadoop_tools.cli.CLIError(
+            f"The HDFS root directory must not be {exc}."
+        ) from exc
