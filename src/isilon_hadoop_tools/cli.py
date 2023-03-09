@@ -1,13 +1,8 @@
 """This module defines a CLI common to all command-line tools."""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import argparse
 import getpass
 import logging
-
-from future.utils import raise_from
 
 import isilon_hadoop_tools.onefs
 
@@ -111,7 +106,7 @@ class HintedError(CLIError):
     """
 
     def __str__(self):
-        base_str = super(HintedError, self).__str__()
+        base_str = super().__str__()
         return str(getattr(self, "__cause__", None)) + "\nHint: " + base_str
 
 
@@ -127,30 +122,21 @@ def _client_from_onefs_cli(init, args):
             verify_ssl=not args.no_verify,
         )
     except isilon_hadoop_tools.onefs.OneFSCertificateError as exc:
-        raise_from(
-            HintedError("--no-verify can be used to skip certificate verification."),
-            exc,
-        )
+        raise HintedError(
+            "--no-verify can be used to skip certificate verification."
+        ) from exc
     except isilon_hadoop_tools.onefs.MissingLicenseError as exc:
-        raise_from(
-            CLIError(
-                (
-                    isilon_hadoop_tools.onefs.APIError.license_expired_error_format
-                    if isinstance(exc, isilon_hadoop_tools.onefs.ExpiredLicenseError)
-                    else isilon_hadoop_tools.onefs.APIError.license_missing_error_format
-                ).format(exc),
-            ),
-            exc,
-        )
+        raise CLIError(
+            (
+                isilon_hadoop_tools.onefs.APIError.license_expired_error_format
+                if isinstance(exc, isilon_hadoop_tools.onefs.ExpiredLicenseError)
+                else isilon_hadoop_tools.onefs.APIError.license_missing_error_format
+            ).format(exc),
+        ) from exc
     except isilon_hadoop_tools.onefs.MissingZoneError as exc:
-        raise_from(
-            CLIError(
-                isilon_hadoop_tools.onefs.APIError.zone_not_found_error_format.format(
-                    exc
-                )
-            ),
-            exc,
-        )
+        raise CLIError(
+            isilon_hadoop_tools.onefs.APIError.zone_not_found_error_format.format(exc)
+        ) from exc
 
 
 def hdfs_client(args):

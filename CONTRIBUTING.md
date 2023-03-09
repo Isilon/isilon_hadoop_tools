@@ -20,11 +20,11 @@ Use [`tox`](https://tox.readthedocs.io/) to deploy and run the project source co
 # Build and test the entire project:
 tox
 
-# Run a specific test with Python 2.7, and drop into Pdb if it fails:
-tox -e py27 -- -k test_catches --pdb
+# Run a specific test with Python 3.7, and drop into Pdb if it fails:
+tox -e py37 -- -k test_catches --pdb
 
-# Create a Python 3.5 development environment:
-tox -e py35 --devenv ./venv
+# Create a Python 3.7 development environment:
+tox -e py37 --devenv ./venv
 
 # Run an IHT console_script in that environment:
 venv/bin/isilon_create_users --help

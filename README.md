@@ -9,7 +9,7 @@ Tools for Using Hadoop with OneFS
 
 ## Installation
 
-Isilon Hadoop Tools (IHT) currently requires Python 3.5+ and supports OneFS 8+.
+Isilon Hadoop Tools (IHT) currently requires Python 3.7+ and supports OneFS 8+.
 
 - Python support schedules can be found [in the Python Developer's Guide](https://devguide.python.org/#status-of-python-branches).
 - OneFS support schedules can be found in the [Isilon Product Availability Guide](https://support.emc.com/docu45445_Isilon-Product-Availability.pdf).
@@ -20,7 +20,7 @@ Isilon Hadoop Tools (IHT) currently requires Python 3.5+ and supports OneFS 8+.
 <summary>Use <code>pipx</code> to install IHT.</summary>
 <br>
 
-> _`pipx` requires Python 3.6 or later. For other versions or **offline installations**, see Option 2._
+> _`pipx` requires Python 3.7 or later._
 
 1. [Install `pipx`:](https://pipxproject.github.io/pipx/installation/)
 

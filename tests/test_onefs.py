@@ -1,19 +1,10 @@
 """Verify the functionality of isilon_hadoop_tools.onefs."""
 
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import socket
 
-try:
-    # Python 3
-    from unittest.mock import Mock
-    from urllib.parse import urlparse
-except ImportError:
-    # Python 2
-    from mock import Mock
-    from urlparse import urlparse
+from unittest.mock import Mock
+from urllib.parse import urlparse
 import uuid
 
 import isi_sdk_7_2

@@ -17,14 +17,12 @@ class IsilonHadoopToolError(Exception):
     """All Exceptions emitted from this package inherit from this Exception."""
 
     def __str__(self):
-        return super(IsilonHadoopToolError, self).__str__() or repr(self)
+        return super().__str__() or repr(self)
 
     def __repr__(self):
-        return "{0}{cause}".format(
-            super(IsilonHadoopToolError, self).__repr__(),
-            cause=(
-                " caused by {0!r}".format(self.__cause__)  # pylint: disable=no-member
-                if getattr(self, "__cause__", None)
-                else ""
-            ),
+        cause = (
+            f" caused by {self.__cause__!r}"  # pylint: disable=no-member
+            if getattr(self, "__cause__", None)
+            else ""
         )
+        return f"{super()!r}{cause}"
