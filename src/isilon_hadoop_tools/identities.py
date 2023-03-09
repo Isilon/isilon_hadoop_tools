@@ -428,6 +428,8 @@ def cdp_identities(zone):
             "llama": ("llama", set()),
             "livy": ("livy", set()),
             "mapred": ("mapred", {"hadoop", "supergroup"}),
+            "nifi": ("nifi", set()),
+            "nifiregistry": ("nifiregistry", set()),
             "oozie": ("oozie", set()),
             "phoenix": ("phoenix", set()),
             "ranger": ("ranger", {"hadoop", "supergroup"}),
