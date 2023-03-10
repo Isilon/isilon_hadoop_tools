@@ -11,8 +11,8 @@ Tools for Using Hadoop with OneFS
 
 Isilon Hadoop Tools (IHT) currently requires Python 3.7+ and supports OneFS 8+.
 
-- Python support schedules can be found [in the Python Developer's Guide](https://devguide.python.org/#status-of-python-branches).
-- OneFS support schedules can be found in the [Isilon Product Availability Guide](https://support.emc.com/docu45445_Isilon-Product-Availability.pdf).
+- Python support schedules can be found [in the Python Developer's Guide](https://devguide.python.org/versions/).
+- OneFS support schedules can be found in the [PowerScale OneFS Product Availability Guide](https://www.dell.com/support/manuals/en-us/isilon-onefs/ifs_pub_product_availability_9.4.0.0/software?guid=guid-925f6b6a-2882-42b1-8b64-2c5eb2190eb7).
 
 ### Option 1: Install as a stand-alone command line tool.
 
