@@ -181,9 +181,7 @@ def cdp_directories(identity_suffix=None):
         HDFSDirectory("/user/yarn/mapreduce", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/user/yarn/mapreduce/mr-framework", "yarn", "hadoop", 0o775),
         HDFSDirectory("/user/yarn/services", "hdfs", "supergroup", 0o775),
-        HDFSDirectory(
-            "/user/yarn/services/service-framework", "hdfs", "supergroup", 0o775
-        ),
+        HDFSDirectory("/user/yarn/services/service-framework", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/user/zeppelin", "zeppelin", "zeppelin", 0o775),
         HDFSDirectory("/warehouse", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/warehouse/tablespace", "hdfs", "supergroup", 0o775),
@@ -191,6 +189,8 @@ def cdp_directories(identity_suffix=None):
         HDFSDirectory("/warehouse/tablespace/managed", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/warehouse/tablespace/external/hive", "hive", "hive", 0o1775),
         HDFSDirectory("/warehouse/tablespace/managed/hive", "hive", "hive", 0o1775),
+        HDFSDirectory("/yarn", "yarn", "yarn", 0o700),
+        HDFSDirectory("/yarn/node-labels", "yarn", "yarn", 0o700),
     ]
     if identity_suffix:
         for directory in directories:
