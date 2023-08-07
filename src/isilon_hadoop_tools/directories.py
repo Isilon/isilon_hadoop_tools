@@ -60,7 +60,7 @@ class Creator:
         if setup:
             setup(zone_root, hdfs_root, zone_hdfs)
         for directory in directories:
-            zone_path = posixpath.join(zone_hdfs, directory.path.lstrip(posixpath.sep))
+            zone_path = posixpath.join(zone_hdfs, directory.path.lstrip(sep))
             LOGGER.info("mkdir '%s%s'", zone_root, zone_path)
             try:
                 (mkdir or self.onefs.mkdir)(
