@@ -56,7 +56,7 @@ class Creator:
             # and modifying /ifs can break NFS/SMB.
             raise HDFSRootDirectoryError(hdfs_root)
         assert hdfs_root.startswith(zone_root)
-        zone_hdfs = hdfs_root[len(zone_root) :]
+        zone_hdfs = posixpath.relpath(hdfs_root, start=zone_root)
         if setup:
             setup(zone_root, hdfs_root, zone_hdfs)
         for directory in directories:
