@@ -56,30 +56,27 @@ class Creator:
             # and modifying /ifs can break NFS/SMB.
             raise HDFSRootDirectoryError(hdfs_root)
         assert hdfs_root.startswith(zone_root)
-        zone_hdfs = hdfs_root[len(zone_root) :]
+        zone_hdfs = posixpath.relpath(hdfs_root, start=zone_root)
         if setup:
             setup(zone_root, hdfs_root, zone_hdfs)
         for directory in directories:
-            path = posixpath.join(zone_hdfs, directory.path.lstrip(posixpath.sep))
-            LOGGER.info("mkdir '%s%s'", zone_root, path)
+            zone_path = posixpath.join(zone_hdfs, directory.path.lstrip(sep))
+            path = posixpath.join(zone_root, zone_path)
+            LOGGER.info("mkdir '%s'", path)
             try:
-                (mkdir or self.onefs.mkdir)(path, directory.mode, zone=self.onefs_zone)
+                (mkdir or self.onefs.mkdir)(
+                    zone_path, directory.mode, zone=self.onefs_zone
+                )
             except isilon_hadoop_tools.onefs.APIError as exc:
                 if exc.dir_path_already_exists_error():
-                    LOGGER.warning("%s%s already exists. ", zone_root, path)
+                    LOGGER.warning("%s already exists. ", path)
                 else:
                     raise
-            LOGGER.info("chmod '%o' '%s%s'", directory.mode, zone_root, path)
-            (chmod or self.onefs.chmod)(path, directory.mode, zone=self.onefs_zone)
-            LOGGER.info(
-                "chown '%s:%s' '%s%s'",
-                directory.owner,
-                directory.group,
-                zone_root,
-                path,
-            )
+            LOGGER.info("chmod '%o' '%s'", directory.mode, path)
+            (chmod or self.onefs.chmod)(zone_path, directory.mode, zone=self.onefs_zone)
+            LOGGER.info("chown '%s:%s' '%s'", directory.owner, directory.group, path)
             (chown or self.onefs.chown)(
-                path,
+                zone_path,
                 owner=directory.owner,
                 group=directory.group,
                 zone=self.onefs_zone,
@@ -181,7 +178,9 @@ def cdp_directories(identity_suffix=None):
         HDFSDirectory("/user/yarn/mapreduce", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/user/yarn/mapreduce/mr-framework", "yarn", "hadoop", 0o775),
         HDFSDirectory("/user/yarn/services", "hdfs", "supergroup", 0o775),
-        HDFSDirectory("/user/yarn/services/service-framework", "hdfs", "supergroup", 0o775),
+        HDFSDirectory(
+            "/user/yarn/services/service-framework", "hdfs", "supergroup", 0o775
+        ),
         HDFSDirectory("/user/zeppelin", "zeppelin", "zeppelin", 0o775),
         HDFSDirectory("/warehouse", "hdfs", "supergroup", 0o775),
         HDFSDirectory("/warehouse/tablespace", "hdfs", "supergroup", 0o775),

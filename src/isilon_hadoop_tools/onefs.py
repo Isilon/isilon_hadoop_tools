@@ -1054,11 +1054,10 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
                 response.raise_for_status()
             except requests.exceptions.HTTPError as exc:
                 raise NonSDKAPIError("The auth cache could not be flushed.") from exc
-            else:
-                assert bool(
-                    response.status_code
-                    == requests.codes.no_content,  # pylint: disable=no-member
-                )
+            assert bool(
+                response.status_code
+                == requests.codes.no_content,  # pylint: disable=no-member
+            )
         else:
             try:
                 self._sdk.AuthApi(self._api_client).create_auth_cache_item(
