@@ -1,7 +1,7 @@
 """Isilon Hadoop Tools"""
 
 
-from pkg_resources import get_distribution
+import importlib.metadata
 
 
 __all__ = [
@@ -10,7 +10,7 @@ __all__ = [
     # Exceptions
     "IsilonHadoopToolError",
 ]
-__version__ = get_distribution(__name__).version
+__version__ = importlib.metadata.version(__name__)
 
 
 class IsilonHadoopToolError(Exception):
