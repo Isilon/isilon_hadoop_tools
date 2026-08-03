@@ -1,5 +1,7 @@
 name: Validation
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   tox:
     runs-on: ubuntu-latest
