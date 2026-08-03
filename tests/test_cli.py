@@ -1,6 +1,5 @@
 """Verify the functionality of isilon_hadoop_tools.cli."""
 
-
 from unittest.mock import Mock
 
 import pytest

@@ -1,6 +1,5 @@
 """Define config and fixtures for testing the functionality of isilon_hadoop_tools."""
 
-
 import configparser
 from contextlib2 import ExitStack as does_not_raise
 from enum import Enum
