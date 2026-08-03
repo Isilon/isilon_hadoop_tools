@@ -17,7 +17,7 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.10",
     install_requires=[
         "isi-sdk-7-2 ~= 0.2.11",
         "isi-sdk-8-0 ~= 0.2.11",
@@ -28,7 +28,6 @@ setuptools.setup(
         "isi-sdk-8-2-1 ~= 0.2.11",
         "isi-sdk-8-2-2 ~= 0.2.11",
         "requests >= 2.20.0",
-        "setuptools >= 41.0.0",
         "urllib3 >= 1.22.0",
     ],
     entry_points={
@@ -41,10 +40,10 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
     ],
 )
