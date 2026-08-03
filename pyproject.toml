@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 # https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#pylint
 [tool.pylint.design]
 max-args = "7"
+max-positional-arguments = "7"
 [tool.pylint.format]
 max-line-length = "100"
 
