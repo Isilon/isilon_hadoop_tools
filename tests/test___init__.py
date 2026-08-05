@@ -1,6 +1,5 @@
 """Verify the functionality of isilon_hadoop_tools.__init__."""
 
-
 import pytest
 
 import isilon_hadoop_tools

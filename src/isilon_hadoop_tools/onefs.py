@@ -66,7 +66,6 @@ REQUEST_TIMEOUT = 60 * 3  # seconds
 
 
 class OneFSFeature(Enum):
-
     """OneFS Feature Flags for Use with Client.feature_is_supported"""
 
     # These values come from sys/sys/isi_upgrade_api_featuremap.h.
@@ -249,7 +248,6 @@ class UndecodableAPIError(MalformedAPIError):
 
 
 class APIError(_BaseAPIError):
-
     """This exception wraps an Isilon SDK ApiException."""
 
     # pylint: disable=invalid-name
@@ -608,7 +606,6 @@ def _license_is_active(license_):
 
 
 class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-
     """Interact with OneFS."""
 
     def __init__(
@@ -1054,11 +1051,10 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
                 response.raise_for_status()
             except requests.exceptions.HTTPError as exc:
                 raise NonSDKAPIError("The auth cache could not be flushed.") from exc
-            else:
-                assert bool(
-                    response.status_code
-                    == requests.codes.no_content,  # pylint: disable=no-member
-                )
+            assert bool(
+                response.status_code
+                == requests.codes.no_content,  # pylint: disable=no-member
+            )
         else:
             try:
                 self._sdk.AuthApi(self._api_client).create_auth_cache_item(
@@ -1402,7 +1398,6 @@ class BaseClient:  # pylint: disable=too-many-public-methods,too-many-instance-a
 
 
 class Client(BaseClient):
-
     """Do some basic checks after connecting to OneFS."""
 
     @classmethod

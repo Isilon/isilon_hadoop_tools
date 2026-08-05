@@ -1,6 +1,7 @@
 """Packaging for Isilon Hadoop Tools"""
 
-import setuptools
+# setuptools is listed in build-system, but pylint doesn't recognize that:
+import setuptools  # pylint: disable=import-error
 
 with open("README.md", encoding="utf-8") as readme_file:
     README = readme_file.read()

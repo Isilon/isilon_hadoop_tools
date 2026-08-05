@@ -45,7 +45,6 @@ def _log_create_proxy_user(proxy_user_name, members):
 
 
 class Creator:
-
     """
     Create users and groups with contiguous IDs on OneFS
     and in a local user/group creation script for Linux.

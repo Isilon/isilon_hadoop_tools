@@ -1,6 +1,5 @@
 """Isilon Hadoop Tools"""
 
-
 import importlib.metadata
 
 

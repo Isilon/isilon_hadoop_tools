@@ -99,7 +99,6 @@ def onefs_cli(parser=None):
 
 
 class HintedError(CLIError):
-
     """
     This exception is used to modify the error message passed to the user
     when a common error occurs that has a possible solution the user will likely want.
@@ -115,9 +114,11 @@ def _client_from_onefs_cli(init, args):
         return init(
             address=args.onefs_address,
             username=args.onefs_user,
-            password=getpass.getpass()
-            if args.onefs_password is None
-            else args.onefs_password,
+            password=(
+                getpass.getpass()
+                if args.onefs_password is None
+                else args.onefs_password
+            ),
             default_zone=args.zone,
             verify_ssl=not args.no_verify,
         )

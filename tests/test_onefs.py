@@ -1,6 +1,5 @@
 """Verify the functionality of isilon_hadoop_tools.onefs."""
 
-
 import socket
 
 from unittest.mock import Mock
