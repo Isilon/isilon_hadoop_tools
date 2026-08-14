@@ -7,6 +7,7 @@ from enum import Enum
 import json
 import logging
 import posixpath
+import random
 import socket
 import struct
 import time
@@ -251,6 +252,9 @@ class APIError(_BaseAPIError):
     """This exception wraps an Isilon SDK ApiException."""
 
     # pylint: disable=invalid-name
+    dir_path_already_exists_error_format = (
+        "Unable to create directory as requested -- container already exists"
+    )
     gid_already_exists_error_format = "Group already exists with gid '{0}'"
     group_already_exists_error_format = "Group '{0}' already exists"
     group_not_found_error_format = "Failed to find group for 'GROUP:{0}': No such group"
@@ -267,6 +271,11 @@ class APIError(_BaseAPIError):
         " more information on evaluating and purchasing {0}."
     )
     proxy_user_already_exists_error_format = "Proxyuser '{0}' already exists"
+    service_unavailable_error_format = (
+        "OneFS API is temporarily unavailable."
+        " The limit for simultaneous requests has been reached."
+        " Please try again later."
+    )
     try_again_error_format = (
         "OneFS API is temporarily unavailable. Try your request again."
     )
@@ -279,9 +288,6 @@ class APIError(_BaseAPIError):
     user_not_found_error_format = "Failed to find user for 'USER:{0}': No such user"
     user_unresolvable_error_format = "Could not resolve user {0}"
     zone_not_found_error_format = 'Access Zone "{0}" not found.'
-    dir_path_already_exists_error_format = (
-        "Unable to create directory as requested -- container already exists"
-    )
     # pylint: enable=invalid-name
 
     def __str__(self):
@@ -317,6 +323,15 @@ class APIError(_BaseAPIError):
         for error in self.errors():
             if filter_func(error):
                 yield error
+
+    def dir_path_already_exists_error(self):
+        """Returns True if the exception contains a directory path already exist error."""
+        return any(
+            self.filtered_errors(
+                lambda error: error["message"]
+                == self.dir_path_already_exists_error_format,
+            )
+        )
 
     def gid_already_exists_error(self, gid):
         """Returns True if the exception contains a GID already exists error."""
@@ -393,6 +408,15 @@ class APIError(_BaseAPIError):
             )
         )
 
+    def service_unavailable_error(self):
+        """Returns True if the exception indicated PAPI hit its request limit."""
+        return any(
+            self.filtered_errors(
+                lambda error: error["message"]
+                == self.service_unavailable_error_format,
+            )
+        )
+
     def try_again_error(self):
         """Returns True if the exception indicated PAPI is temporarily unavailable."""
         return any(
@@ -463,15 +487,6 @@ class APIError(_BaseAPIError):
                 == self.zone_not_found_error_format.format(
                     zone_name,
                 ),
-            )
-        )
-
-    def dir_path_already_exists_error(self):
-        """Returns True if the exception contains a directory path already exist error."""
-        return any(
-            self.filtered_errors(
-                lambda error: error["message"]
-                == self.dir_path_already_exists_error_format,
             )
         )
 
@@ -561,10 +576,21 @@ def sdk_for_revision(revision, strict=False):
     return isi_sdk_8_2_2  # The latest SDK available.
 
 
+# Retry policy for transient, retriable OneFS API errors (see accesses_onefs).
+# Retries use exponential backoff with jitter to avoid a thundering herd when
+# many clients hit the "simultaneous requests" limit at once. After
+# ONEFS_MAX_RETRIES retries, the wrapped APIError is re-raised.
+ONEFS_MAX_RETRIES = 5
+ONEFS_RETRY_BACKOFF_BASE = 2.0  # seconds
+ONEFS_RETRY_BACKOFF_CAP = 30.0  # seconds
+ONEFS_RETRY_BACKOFF_JITTER = 1.0  # seconds
+
+
 def accesses_onefs(func):
     """Decorate a Client method that makes an SDK call directly."""
 
     def _decorated(self, *args, **kwargs):
+        attempt = 0
         while True:
             try:
                 return func(self, *args, **kwargs)
@@ -586,10 +612,26 @@ def accesses_onefs(func):
                 ):
                     raise OneFSCertificateError from exc
                 wrapped_exc = APIError(exc)
-                if not wrapped_exc.try_again_error():
+                if not (
+                    wrapped_exc.try_again_error()
+                    or wrapped_exc.service_unavailable_error()
+                ) or attempt >= ONEFS_MAX_RETRIES:
                     raise wrapped_exc from exc
-                time.sleep(2)
-                LOGGER.info(wrapped_exc.try_again_error_format)
+
+                backoff = min(
+                    ONEFS_RETRY_BACKOFF_CAP,
+                    ONEFS_RETRY_BACKOFF_BASE * (2 ** attempt),
+                )
+                delay = backoff + random.uniform(0, ONEFS_RETRY_BACKOFF_JITTER)
+                LOGGER.info(
+                    "%s (retry %d/%d in %.1fs)",
+                    wrapped_exc,
+                    attempt + 1,
+                    ONEFS_MAX_RETRIES,
+                    delay,
+                )
+                time.sleep(delay)
+                attempt += 1
 
     return _decorated
 
